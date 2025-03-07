@@ -1,0 +1,13 @@
+{
+    "module_name": "Mouse Jiggler",
+    "maintainer": "Yer Da",
+    "features": {
+        "deferred_exec": true
+    },
+    "keycodes": [
+        {
+            "key": "COMMUNITY_MODULE_MOUSE_JIGGLER_TOGGLE",
+            "aliases": ["CM_MSJG"]
+        }
+    ]
+}

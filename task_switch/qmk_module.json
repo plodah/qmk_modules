@@ -1,0 +1,16 @@
+{
+    "module_name": "Task Switch",
+    "maintainer": "Yer Da",
+    "features": {
+    },
+    "keycodes": [
+        {
+            "key": "COMMUNITY_MODULE_TASK_SWITCH_NEXT",
+            "aliases": ["CM_TSKN"]
+        },
+        {
+            "key": "COMMUNITY_MODULE_TASK_SWITCH_PREVIOUS",
+            "aliases": ["CM_TSKP"]
+        }
+    ]
+}

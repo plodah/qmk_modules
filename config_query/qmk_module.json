@@ -1,0 +1,28 @@
+{
+    "module_name": "Config Query",
+    "maintainer": "Plodah",
+    "features": {
+    },
+    "keycodes": [
+        {
+            "key": "COMMUNITY_MODULE_QUERY_FEATURES",
+            "aliases": ["CM_QFTR"]
+        },
+        {
+            "key": "COMMUNITY_MODULE_QUERY_LAYER",
+            "aliases": ["CM_QLYR"]
+        },
+        {
+            "key": "COMMUNITY_MODULE_QUERY_TAPPING",
+            "aliases": ["CM_QTAP"]
+        },
+        {
+            "key": "COMMUNITY_MODULE_QUERY_VERSION",
+            "aliases": ["CM_QVER"]
+        },
+        {
+            "key": "COMMUNITY_MODULE_QUERY_RGB",
+            "aliases": ["CM_QRGB"]
+        }
+    ]
+}
