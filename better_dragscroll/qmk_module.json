@@ -1,0 +1,16 @@
+{
+    "module_name": "Better Dragscroll",
+    "maintainer": "Plodah",
+    "features": {
+    },
+    "keycodes": [
+        {
+            "key": "COMMUNITY_MODULE_DRAG_SCROLL_MOMENTARY",
+            "aliases": ["CM_DRGM"]
+        },
+        {
+            "key": "COMMUNITY_MODULE_DRAG_SCROLL_TOGGLE",
+            "aliases": ["CM_DRGT"]
+        }
+    ]
+}
