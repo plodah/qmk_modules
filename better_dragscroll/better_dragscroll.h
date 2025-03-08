@@ -11,3 +11,6 @@
 bool dragscroll_enabled = 0;
 float dragscroll_acc_h = 0;
 float dragscroll_acc_v = 0;
+
+void dragscroll_toggle(bool pressed);
+void dragscroll_momentary(bool pressed);
