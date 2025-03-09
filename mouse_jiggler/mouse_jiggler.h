@@ -6,14 +6,6 @@
   #define MSJIGGLER_INTRO_TIMEOUT 1400
 #endif // MSJIGGLER_NOINTRO
 
-#if !defined(MSJIGGLER_INDICATOR_HSV)
-    #define MSJIGGLER_INDICATOR_HSV HSV_ORANGE
-#endif // !defined(MSJIGGLER_INDICATOR_HSV)
-
-#if !defined(MSJIGGLER_INDICATOR_HSV)
-    #define MSJIGGLER_INDICATOR_HSV HSV_ORANGE
-#endif // !defined(MSJIGGLER_INDICATOR_HSV)
-
 deferred_token msJigMainToken;
 deferred_token msJigIntroToken;
 deferred_token msJigIntroTimerToken;
