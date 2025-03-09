@@ -4,6 +4,11 @@
 #include "quantum.h"
 #include "mouse_jiggler.h"
 
+report_mouse_t msJigReport = {0};
+deferred_token msJigMainToken = INVALID_DEFERRED_TOKEN;
+deferred_token msJigIntroToken = INVALID_DEFERRED_TOKEN;
+deferred_token msJigIntroTimerToken = INVALID_DEFERRED_TOKEN;
+
 uint32_t jiggler_pattern(int8_t deltas[], int8_t numdeltas, int8_t phasefraction, int8_t scalex, int8_t scaley, bool randomdelay, int16_t basedelay ) {
   static uint8_t phase = 0;
   msJigReport.x = scalex * deltas[phase];
@@ -26,6 +31,11 @@ void jiggler_intro_end(void){
     msJigIntroTimerToken = INVALID_DEFERRED_TOKEN;
   }
 }
+
+// Deltas only work if the length of the array is a power of 2.
+int8_t circledeltas[32] = {0,-1,-2,-2,-3,-3,-4,-4,-4,-4,-3,-3,-2,-2,-1,0,0,1,2,2,3,3,4,4,4,4,3,3,2,2,1,0};
+int8_t subtledeltas[16] = {1,-1,1,1,-2,2,-2,-2,2,-2,2,2,-1,1,-1,-1};
+int8_t squaredeltas[16] = {1,1,1,1,0,0,0,0,-1,-1,-1,-1,0,0,0,0};
 
 // jiggler_pattern( deltas[], numdeltas, phasefraction, scalex, scaley, randomdelay, basedelay )
 uint32_t jiggler_circle(uint32_t trigger_time, void* cb_arg) {
@@ -66,12 +76,12 @@ void jiggler_end(void){
   cancel_deferred_exec(msJigMainToken);
   msJigReport = (report_mouse_t){};  // Clear the mouse.
   host_mouse_send(&msJigReport);
-  #if defined(MSJIGGLER_INTRO)
+  #if !defined(MSJIGGLER_NOINTRO)
     msJigIntroToken = defer_exec(1, jiggler_xline, NULL);
     #if defined(MSJIGGLER_INTRO_TIMEOUT)
       msJigIntroTimerToken = defer_exec(MSJIGGLER_INTRO_TIMEOUT, jiggler_introtimer, NULL);
     #endif // MSJIGGLER_INTRO_TIMEOUT
-  #endif // MSJIGGLER_INTRO
+  #endif // !defined(MSJIGGLER_NOINTRO)
   msJigMainToken = INVALID_DEFERRED_TOKEN;
 }
 
@@ -86,12 +96,12 @@ void jiggler_start(void){
   #else // MSJIGGLER_PATTERN
     msJigMainToken = defer_exec(1, jiggler_subtle, NULL);
   #endif // MSJIGGLER_PATTERN
-  #if defined(MSJIGGLER_INTRO)
+  #if !defined(MSJIGGLER_NOINTRO)
     msJigIntroToken = defer_exec(1, jiggler_intro, NULL);
     #if defined(MSJIGGLER_INTRO_TIMEOUT)
       msJigIntroTimerToken = defer_exec(MSJIGGLER_INTRO_TIMEOUT, jiggler_introtimer, NULL);
     #endif // MSJIGGLER_INTRO_TIMEOUT
-  #endif // MSJIGGLER_INTRO
+  #endif // !defined(MSJIGGLER_NOINTRO)
 }
 
 void jiggler_toggle(void){

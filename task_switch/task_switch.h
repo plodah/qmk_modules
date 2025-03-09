@@ -16,9 +16,4 @@
     uint16_t taskswitch_timer = 0;
 #endif // defined(TASKSWITCH_MODE_DE)
 
-#if defined(TASKSWITCH_MODE_DE)
-  uint32_t taskswitch_reset(uint32_t trigger_time, void *cb_arg);
-#else // TASKSWITCH_MODE_DE
-  void matrix_scan_task_switch(void);
-#endif // TASKSWITCH_MODE_DE
 void taskswitch_start(bool reverse);
