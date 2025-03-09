@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include "quantum.h"
+#include "config_query.h"
 
 #if !defined(CM_QFTR_DISABLED)
     char* queryFeatures(void) {
