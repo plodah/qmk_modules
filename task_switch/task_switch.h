@@ -10,10 +10,10 @@
 #endif // DEFERRED_EXEC_ENABLE
 
 #if defined(TASKSWITCH_MODE_DE)
-    static deferred_token taskSwitchToken = INVALID_DEFERRED_TOKEN;
+    deferred_token taskSwitchToken;
 #else // TASKSWITCH_MODE_DE
-    bool is_taskswitch_active = false;
-    uint16_t taskswitch_timer = 0;
+    bool is_taskswitch_active;
+    uint16_t taskswitch_timer;
 #endif // defined(TASKSWITCH_MODE_DE)
 
 void taskswitch_start(bool reverse);
