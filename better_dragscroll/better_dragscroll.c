@@ -2,6 +2,7 @@
 #include "quantum.h"
 #include "better_dragscroll.h"
 
+bool better_dragscroll_enabled = 0;
 float dragscroll_acc_h = 0;
 float dragscroll_acc_v = 0;
 

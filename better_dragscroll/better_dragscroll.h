@@ -6,7 +6,7 @@
     #define BETTER_DRAGSCROLL_DIVISOR_V 4
 #endif
 
-bool better_dragscroll_enabled = 0;
+bool better_dragscroll_enabled;
 
 void better_dragscroll_toggle(bool pressed);
 void better_dragscroll_momentary(bool pressed);
