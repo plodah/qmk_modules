@@ -33,21 +33,21 @@ bool process_record_better_dragscroll(uint16_t keycode, keyrecord_t *record) {
 
 report_mouse_t pointing_device_task_better_dragscroll(report_mouse_t mouse_report) {
     if (dragscroll_enabled) {
-        dragscroll_acc_h += (float)mouse_report.x / DRAGSCROLL_DIVISOR_H;
-        dragscroll_acc_v += (float)mouse_report.y / DRAGSCROLL_DIVISOR_V;
+        dragscroll_acc_h += (float)mouse_report.x / BETTER_DRAGSCROLL_DIVISOR_H;
+        dragscroll_acc_v += (float)mouse_report.y / BETTER_DRAGSCROLL_DIVISOR_V;
 
         // Assign integer parts of accumulated scroll values to the mouse report
 
-        #ifdef DRAGSCROLL_INVERT_H
+        #ifdef BETTER_DRAGSCROLL_INVERT_H
           mouse_report.h = -(int8_t)dragscroll_acc_h;
         #else
           mouse_report.h = (int8_t)dragscroll_acc_h;
-        #endif // DRAGSCROLL_INVERT_V
-        #ifdef DRAGSCROLL_INVERT_V
+        #endif // BETTER_DRAGSCROLL_INVERT_V
+        #ifdef BETTER_DRAGSCROLL_INVERT_V
           mouse_report.v = -(int8_t)dragscroll_acc_v;
         #else
           mouse_report.v = (int8_t)dragscroll_acc_v;
-        #endif // DRAGSCROLL_INVERT_V
+        #endif // BETTER_DRAGSCROLL_INVERT_V
 
         // Update accumulated scroll values by subtracting the integer parts
         dragscroll_acc_h -= (int8_t)dragscroll_acc_h;
@@ -69,11 +69,11 @@ report_mouse_t pointing_device_task_better_dragscroll(report_mouse_t mouse_repor
       #if defined(DRAGSCROLL_CAPLK_ENABLE)
         ||
       #endif
-    #endif // DRAGSCROLL_SCRLK_ENABLE
+    #endif // BETTER_DRAGSCROLL_SCRLK_ENABLE
 
     #if defined(DRAGSCROLL_CAPLK_ENABLE)
       led_state.caps_lock
-    #endif // DRAGSCROLL_SCRLK_ENABLE
+    #endif // BETTER_DRAGSCROLL_SCRLK_ENABLE
     ;
     return true;
   }

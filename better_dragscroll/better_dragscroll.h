@@ -1,10 +1,10 @@
 
 #if !defined(DRAGSCROLL_DIVISOR_H)
-    #define DRAGSCROLL_DIVISOR_H 4
+    #define BETTER_DRAGSCROLL_DIVISOR_H 4
 #endif
 
 #if !defined(DRAGSCROLL_DIVISOR_V)
-    #define DRAGSCROLL_DIVISOR_V 4
+    #define BETTER_DRAGSCROLL_DIVISOR_V 4
 #endif
 
 
