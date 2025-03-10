@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <stdio.h>
 #include "quantum.h"
 #include "better_dragscroll.h"
 
@@ -7,12 +8,14 @@ float dragscroll_acc_h = 0;
 float dragscroll_acc_v = 0;
 
 void better_dragscroll_toggle(bool pressed){
+    dprintf("better_dragscroll_toggle\n");
     if(pressed){
         better_dragscroll_enabled ^= 1;
     }
 }
 
 void better_dragscroll_momentary(bool pressed){
+    dprintf("better_dragscroll_momentary\n");
     better_dragscroll_enabled = pressed;
 }
 
@@ -29,7 +32,8 @@ bool process_record_better_dragscroll(uint16_t keycode, keyrecord_t *record) {
             return false;
         #if !defined(BETTER_DRAGSCROLL_INDEFINITE)
         default:
-            better_dragscroll_enabled = 0;
+            better_dragscroll_enabled = 0; // this is potentially breaking but can't test
+            break;
         #endif // !defined(BETTER_DRAGSCROLL_INDEFINITE)
     }
     return true;
