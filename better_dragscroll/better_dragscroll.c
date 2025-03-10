@@ -2,14 +2,17 @@
 #include "quantum.h"
 #include "better_dragscroll.h"
 
-void dragscroll_toggle(bool pressed){
+float dragscroll_acc_h = 0;
+float dragscroll_acc_v = 0;
+
+void better_dragscroll_toggle(bool pressed){
     if(pressed){
-        dragscroll_enabled ^= 1;
+        better_dragscroll_enabled ^= 1;
     }
 }
 
-void dragscroll_momentary(bool pressed){
-    dragscroll_enabled = pressed;
+void better_dragscroll_momentary(bool pressed){
+    better_dragscroll_enabled = pressed;
 }
 
 bool process_record_better_dragscroll(uint16_t keycode, keyrecord_t *record) {
@@ -18,21 +21,21 @@ bool process_record_better_dragscroll(uint16_t keycode, keyrecord_t *record) {
     }
     switch (keycode) {
         case COMMUNITY_MODULE_DRAG_SCROLL_MOMENTARY:
-            dragscroll_momentary(record->event.pressed);
+            better_dragscroll_momentary(record->event.pressed);
             return false;
         case COMMUNITY_MODULE_DRAG_SCROLL_TOGGLE:
-            dragscroll_toggle(record->event.pressed);
+            better_dragscroll_toggle(record->event.pressed);
             return false;
-        #if !defined(DRAGSCROLL_INDEFINITE)
+        #if !defined(BETTER_DRAGSCROLL_INDEFINITE)
         default:
-            dragscroll_enabled = 0;
-        #endif // !defined(DRAGSCROLL_INDEFINITE)
+            better_dragscroll_enabled = 0;
+        #endif // !defined(BETTER_DRAGSCROLL_INDEFINITE)
     }
     return true;
 }
 
 report_mouse_t pointing_device_task_better_dragscroll(report_mouse_t mouse_report) {
-    if (dragscroll_enabled) {
+    if (better_dragscroll_enabled) {
         dragscroll_acc_h += (float)mouse_report.x / BETTER_DRAGSCROLL_DIVISOR_H;
         dragscroll_acc_v += (float)mouse_report.y / BETTER_DRAGSCROLL_DIVISOR_V;
 
@@ -60,10 +63,10 @@ report_mouse_t pointing_device_task_better_dragscroll(report_mouse_t mouse_repor
     return mouse_report;
 }
 
-#if defined(DRAGSCROLL_SCRLK_ENABLE) || defined(DRAGSCROLL_CAPLK_ENABLE)
+#if defined(BETTER_DRAGSCROLL_SCRLK_ENABLE) || defined(DRAGSCROLL_CAPLK_ENABLE)
   bool led_update_better_dragscroll(led_t led_state) {
     dprintf("scr:%d", led_state.scroll_lock);
-    dragscroll_enabled =
+    better_dragscroll_enabled =
     #if defined(DRAGSCROLL_SCRLK_ENABLE)
       led_state.scroll_lock
       #if defined(DRAGSCROLL_CAPLK_ENABLE)

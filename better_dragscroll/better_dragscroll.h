@@ -1,5 +1,4 @@
-
-#if !defined(DRAGSCROLL_DIVISOR_H)
+#if !defined(BETTER_DRAGSCROLL_DIVISOR_H)
     #define BETTER_DRAGSCROLL_DIVISOR_H 4
 #endif
 
@@ -7,10 +6,7 @@
     #define BETTER_DRAGSCROLL_DIVISOR_V 4
 #endif
 
+bool better_dragscroll_enabled = 0;
 
-bool dragscroll_enabled = 0;
-float dragscroll_acc_h = 0;
-float dragscroll_acc_v = 0;
-
-void dragscroll_toggle(bool pressed);
-void dragscroll_momentary(bool pressed);
+void better_dragscroll_toggle(bool pressed);
+void better_dragscroll_momentary(bool pressed);
