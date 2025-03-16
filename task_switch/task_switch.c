@@ -10,7 +10,7 @@
         return 0;
     }
 #else // TASKSWITCH_MODE_DE
-    void matrix_scan_task_switch(void) {
+    void housekeeping_task_task_switch(void) {
         if (is_taskswitch_active) {
             if (timer_elapsed(taskswitch_timer) > TASKSWITCH_DELAY) {
                 unregister_code(KC_LALT);
