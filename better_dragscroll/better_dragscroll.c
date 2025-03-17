@@ -3,20 +3,21 @@
 #include "quantum.h"
 #include "better_dragscroll.h"
 
-bool better_dragscroll_enabled = 0;
+bool better_dragscroll_enabled_bylock = 0;
+bool better_dragscroll_enabled_bypress = 0;
 float dragscroll_acc_h = 0;
 float dragscroll_acc_v = 0;
 
 void better_dragscroll_toggle(bool pressed){
     dprintf("better_dragscroll_toggle\n");
     if(pressed){
-        better_dragscroll_enabled ^= 1;
+        better_dragscroll_enabled_bypress ^= 1;
     }
 }
 
 void better_dragscroll_momentary(bool pressed){
     dprintf("better_dragscroll_momentary\n");
-    better_dragscroll_enabled = pressed;
+    better_dragscroll_enabled_bypress = pressed;
 }
 
 bool process_record_better_dragscroll(uint16_t keycode, keyrecord_t *record) {
@@ -32,7 +33,7 @@ bool process_record_better_dragscroll(uint16_t keycode, keyrecord_t *record) {
             return false;
         #if !defined(BETTER_DRAGSCROLL_INDEFINITE)
         default:
-            better_dragscroll_enabled = 0; // this is potentially breaking but can't test
+            better_dragscroll_enabled_bypress = 0; // this is potentially breaking but can't test
             break;
         #endif // !defined(BETTER_DRAGSCROLL_INDEFINITE)
     }
@@ -40,7 +41,7 @@ bool process_record_better_dragscroll(uint16_t keycode, keyrecord_t *record) {
 }
 
 report_mouse_t pointing_device_task_better_dragscroll(report_mouse_t mouse_report) {
-    if (better_dragscroll_enabled) {
+    if (better_dragscroll_enabled_bylock || better_dragscroll_enabled_bypress) {
         dragscroll_acc_h += (float)mouse_report.x / BETTER_DRAGSCROLL_DIVISOR_H;
         dragscroll_acc_v += (float)mouse_report.y / BETTER_DRAGSCROLL_DIVISOR_V;
 
@@ -68,20 +69,24 @@ report_mouse_t pointing_device_task_better_dragscroll(report_mouse_t mouse_repor
     return mouse_report;
 }
 
-#if defined(BETTER_DRAGSCROLL_SCRLK_ENABLE) || defined(DRAGSCROLL_CAPLK_ENABLE)
+#if defined(BETTER_DRAGSCROLL_SCRLK_ENABLE) || defined(BETTER_DRAGSCROLL_CAPLK_ENABLE) || defined(BETTER_DRAGSCROLL_NUMLK_ENABLE) || (defined(VIA_ENABLE) && defined(PLODAH_VIADPI))
   bool led_update_better_dragscroll(led_t led_state) {
-    dprintf("scr:%d", led_state.scroll_lock);
-    better_dragscroll_enabled =
-    #if defined(DRAGSCROLL_SCRLK_ENABLE)
-      led_state.scroll_lock
-      #if defined(DRAGSCROLL_CAPLK_ENABLE)
-        ||
-      #endif
-    #endif // BETTER_DRAGSCROLL_SCRLK_ENABLE
-
-    #if defined(DRAGSCROLL_CAPLK_ENABLE)
-      led_state.caps_lock
-    #endif // BETTER_DRAGSCROLL_SCRLK_ENABLE
+    better_dragscroll_enabled_bylock = false
+    #if (defined(VIA_ENABLE) && defined(PLODAH_VIADPI))
+        || (ploopyvia_config.pointing_dragscroll_caps && led_state.caps_lock)
+        || (ploopyvia_config.pointing_dragscroll_num && led_state.num_lock)
+        || (ploopyvia_config.pointing_dragscroll_scroll && led_state.scroll_lock)
+    #else // (defined(VIA_ENABLE) && defined(PLODAH_VIADPI))
+        #if defined(BETTER_DRAGSCROLL_SCRLK_ENABLE)
+            || led_state.scroll_lock
+        #endif // BETTER_DRAGSCROLL_SCRLK_ENABLE
+        #if defined(BETTER_DRAGSCROLL_CAPLK_ENABLE)
+            || led_state.caps_lock
+        #endif // BETTER_DRAGSCROLL_CAPLK_ENABLE
+        #if defined(BETTER_DRAGSCROLL_NUMLK_ENABLE)
+            || led_state.num_lock
+        #endif // BETTER_DRAGSCROLL_NUMLK_ENABLE
+    #endif // (defined(VIA_ENABLE) && defined(PLODAH_VIADPI))
     ;
     return true;
   }
