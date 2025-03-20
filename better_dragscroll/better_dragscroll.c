@@ -73,9 +73,9 @@ report_mouse_t pointing_device_task_better_dragscroll(report_mouse_t mouse_repor
   bool led_update_better_dragscroll(led_t led_state) {
     better_dragscroll_enabled_bylock = false
     #if (defined(VIA_ENABLE) && defined(PLOOPY_VIAMENUS))
-        || (ploopyvia_config.pointing_dragscroll_caps && led_state.caps_lock)
-        || (ploopyvia_config.pointing_dragscroll_num && led_state.num_lock)
-        || (ploopyvia_config.pointing_dragscroll_scroll && led_state.scroll_lock)
+        || (ploopyvia_config.dragscroll_caps && led_state.caps_lock)
+        || (ploopyvia_config.dragscroll_num && led_state.num_lock)
+        || (ploopyvia_config.dragscroll_scroll && led_state.scroll_lock)
     #else // (defined(VIA_ENABLE) && defined(PLOOPY_VIAMENUS))
         #if defined(BETTER_DRAGSCROLL_SCRLK_ENABLE)
             || led_state.scroll_lock
