@@ -24,18 +24,20 @@ bool process_record_better_dragscroll(uint16_t keycode, keyrecord_t *record) {
     if (!process_record_better_dragscroll_kb(keycode, record)) {
         return false;
     }
-    switch (keycode) {
-        case COMMUNITY_MODULE_BETTER_DRAGSCROLL_MOMENTARY:
-            better_dragscroll_momentary(record->event.pressed);
-            return false;
-        case COMMUNITY_MODULE_BETTER_DRAGSCROLL_TOGGLE:
-            better_dragscroll_toggle(record->event.pressed);
-            return false;
-        #if !defined(BETTER_DRAGSCROLL_INDEFINITE)
-        default:
-            better_dragscroll_enabled_bypress = 0; // this is potentially breaking but can't test
-            break;
-        #endif // !defined(BETTER_DRAGSCROLL_INDEFINITE)
+    if(record->event.pressed){
+        switch (keycode) {
+            case COMMUNITY_MODULE_BETTER_DRAGSCROLL_MOMENTARY:
+                better_dragscroll_momentary(record->event.pressed);
+                return false;
+            case COMMUNITY_MODULE_BETTER_DRAGSCROLL_TOGGLE:
+                better_dragscroll_toggle(record->event.pressed);
+                return false;
+            #if !defined(BETTER_DRAGSCROLL_INDEFINITE)
+            default:
+                better_dragscroll_enabled_bypress = 0; // this is potentially breaking but can't test
+                break;
+            #endif // !defined(BETTER_DRAGSCROLL_INDEFINITE)
+        }
     }
     return true;
 }
