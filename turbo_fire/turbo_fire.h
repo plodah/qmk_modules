@@ -14,7 +14,7 @@
 #endif // TURBO_FIRE_KEY_C
 
 #ifndef TURBO_FIRE_KEY_D
-    #define TURBO_FIRE_KEY_C KC_D
+    #define TURBO_FIRE_KEY_D KC_D
 #endif // TURBO_FIRE_KEY_D
 
 #ifndef TURBO_FIRE_RATE
