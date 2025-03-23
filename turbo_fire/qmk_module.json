@@ -1,0 +1,40 @@
+{
+    "module_name": "Turbo Fire",
+    "maintainer": "plodah",
+    "features": {
+    },
+    "keycodes": [
+        {
+            "key": "COMMUNITY_MODULE_TURBO_A_TOGGLE",
+            "aliases": ["CM_TTAT"]
+        },
+        {
+            "key": "COMMUNITY_MODULE_TURBO_A_MOMENTARY",
+            "aliases": ["CM_TTAM"]
+        },
+        {
+            "key": "COMMUNITY_MODULE_TURBO_B_TOGGLE",
+            "aliases": ["CM_TTBT"]
+        },
+        {
+            "key": "COMMUNITY_MODULE_TURBO_B_MOMENTARY",
+            "aliases": ["CM_TTBM"]
+        },
+        {
+            "key": "COMMUNITY_MODULE_TURBO_C_TOGGLE",
+            "aliases": ["CM_TTCT"]
+        },
+        {
+            "key": "COMMUNITY_MODULE_TURBO_C_MOMENTARY",
+            "aliases": ["CM_TTCM"]
+        },
+        {
+            "key": "COMMUNITY_MODULE_TURBO_D_TOGGLE",
+            "aliases": ["CM_TTDT"]
+        },
+        {
+            "key": "COMMUNITY_MODULE_TURBO_D_MOMENTARY",
+            "aliases": ["CM_TTDM"]
+        }
+    ]
+}
