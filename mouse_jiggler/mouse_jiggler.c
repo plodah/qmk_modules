@@ -38,35 +38,35 @@ int8_t subtledeltas[16] = {1,-1,1,1,-2,2,-2,-2,2,-2,2,2,-1,1,-1,-1};
 int8_t squaredeltas[16] = {1,1,1,1,0,0,0,0,-1,-1,-1,-1,0,0,0,0};
 
 // jiggler_pattern( deltas[], numdeltas, phasefraction, scalex, scaley, randomdelay, basedelay )
-uint32_t jiggler_circle(uint32_t trigger_time, void* cb_arg) {
+uint32_t jiggler_circle(uint32_t trigger_time, void *cb_arg) {
   return jiggler_pattern(circledeltas, 32, 4, 2, 2, 0, 64 );
 }
 
-uint32_t jiggler_square(uint32_t trigger_time, void* cb_arg) {
+uint32_t jiggler_square(uint32_t trigger_time, void *cb_arg) {
   return jiggler_pattern(squaredeltas, 16, 4, 2, 2, 0, 64 );
 }
 
-uint32_t jiggler_intro(uint32_t trigger_time, void* cb_arg) {
+uint32_t jiggler_intro(uint32_t trigger_time, void *cb_arg) {
   return jiggler_pattern(circledeltas, 32, 4, 1, 1, 0, 16 );
 }
 
-uint32_t jiggler_figure(uint32_t trigger_time, void* cb_arg) {
+uint32_t jiggler_figure(uint32_t trigger_time, void *cb_arg) {
   return jiggler_pattern(circledeltas, 32, 4, 4, 4, 0, 64 );
 }
 
-uint32_t jiggler_subtle(uint32_t trigger_time, void* cb_arg) {
+uint32_t jiggler_subtle(uint32_t trigger_time, void *cb_arg) {
   return jiggler_pattern(subtledeltas, 16, 4, 1, 1, 1, 16384 );
 }
 
-uint32_t jiggler_xline(uint32_t trigger_time, void* cb_arg) {
+uint32_t jiggler_xline(uint32_t trigger_time, void *cb_arg) {
   return jiggler_pattern(circledeltas, 32, 4, 1, 0, 0, 24 );
 }
 
-uint32_t jiggler_yline(uint32_t trigger_time, void* cb_arg) {
+uint32_t jiggler_yline(uint32_t trigger_time, void *cb_arg) {
   return jiggler_pattern(circledeltas, 32, 4, 0, 1, 0, 24 );
 }
 
-uint32_t jiggler_introtimer(uint32_t trigger_time, void* cb_arg) {
+uint32_t jiggler_introtimer(uint32_t trigger_time, void *cb_arg) {
   jiggler_intro_end();
   return 0;
 }

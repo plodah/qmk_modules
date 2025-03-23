@@ -31,7 +31,6 @@ void taskswitch_start(bool reverse) {
     if (!is_taskswitch_active) {
 #   endif // TASKSWITCH_MODE_DE
         if (!(get_mods() & MOD_MASK_ALT)){
-            dprintf("Not a mouse, no alt");
 #   if defined(TASKSWITCH_MODE_DE)
             taskSwitchToken = defer_exec(TASKSWITCH_DELAY, taskswitch_reset, NULL);
 #   else // TASKSWITCH_MODE_DE
