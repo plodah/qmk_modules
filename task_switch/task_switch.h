@@ -12,8 +12,9 @@
 #if defined(TASKSWITCH_MODE_DE)
     deferred_token taskSwitchToken;
 #else // TASKSWITCH_MODE_DE
-    bool is_taskswitch_active;
     uint16_t taskswitch_timer;
 #endif // defined(TASKSWITCH_MODE_DE)
+bool is_taskswitch_altregistered;
 
-void taskswitch_start(bool reverse);
+void taskswitch_press(bool reverse);
+void taskswitch_release(void);
