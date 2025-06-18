@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 #if (!defined(MSJIGGLER_NOINTRO)) && (!defined(MSJIGGLER_INTRO_TIMEOUT))
-  #define MSJIGGLER_INTRO_TIMEOUT 1400
+    #define MSJIGGLER_INTRO_TIMEOUT 1400
 #endif // MSJIGGLER_NOINTRO
 
 deferred_token msJigMainToken;
