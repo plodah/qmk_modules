@@ -4,6 +4,8 @@ uint8_t autocorrect_rgbflash_count = 255;
 
 #if defined(AUTOCORRECT_RGBFLASH_MODE_DE)
 // #pragma message("Deferred Exec Autocorrect")
+void autocorrect_rgbflash_switch_on(void);
+void autocorrect_rgbflash_switch_off(void);
 uint32_t autocorrect_rgbflash_switch_on_DE(uint32_t trigger_time, void *cb_arg) {
   autocorrect_rgbflash_switch_on();
   return 0;
