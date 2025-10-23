@@ -1,0 +1,20 @@
+{
+    "module_name": "PMW Runtime Rotation",
+    "maintainer": "Plodah",
+    "features": {
+    },
+    "keycodes": [
+        {
+            "key": "COMMUNITY_MODULE_PMW_ROTATE_CCW",
+            "aliases": ["CM_PCCW"]
+        },
+        {
+            "key": "COMMUNITY_MODULE_PMW_ROTATE_CW",
+            "aliases": ["CM_PCW"]
+        },
+        {
+            "key": "COMMUNITY_MODULE_PMW_ROTATE_RESET",
+            "aliases": ["CM_PRST"]
+        }
+    ]
+}
