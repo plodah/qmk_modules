@@ -1,5 +1,5 @@
 #pragma once
-#include "deferred_exec.h"
+#include QMK_KEYBOARD_H
 
 #ifndef TURBO_FIRE_KEY_A
     #define TURBO_FIRE_KEY_A KC_A

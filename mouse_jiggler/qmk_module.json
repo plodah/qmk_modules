@@ -1,6 +1,6 @@
 {
     "module_name": "Mouse Jiggler",
-    "maintainer": "Yer Da",
+    "maintainer": "Plodah",
     "features": {
         "deferred_exec": true
     },

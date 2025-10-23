@@ -1,5 +1,4 @@
-#include <stdbool.h>
-#include "quantum.h"
+#include QMK_KEYBOARD_H
 #include "task_switch.h"
 
 #if defined(TASKSWITCH_MODE_DE)

@@ -1,5 +1,5 @@
+#include QMK_KEYBOARD_H
 #include "turbo_fire.h"
-#include "quantum.h"
 
 uint8_t turbo_fire_key_a = TURBO_FIRE_KEY_A;
 uint8_t turbo_fire_key_b = TURBO_FIRE_KEY_B;
