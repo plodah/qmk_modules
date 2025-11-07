@@ -1,0 +1,8 @@
+{
+    "module_name": "Combo Flow",
+    "maintainer": "Plodah",
+    "features": {
+        "combo": true,
+        "deferred_exec": true
+    }
+}
