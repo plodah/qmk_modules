@@ -347,9 +347,6 @@
 #endif // !defined(CM_QRGB_DISABLED)
 
 bool process_record_config_query(uint16_t keycode, keyrecord_t *record) {
-    if (!process_record_config_query_kb(keycode, record)) {
-        return false;
-    }
     switch (keycode) {
 
         #if !defined(CM_QFTR_DISABLED)
