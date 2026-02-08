@@ -2,6 +2,7 @@
     "module_name": "PMW Runtime Rotation",
     "maintainer": "Plodah",
     "features": {
+        "pointing_device": true
     },
     "keycodes": [
         {
