@@ -1,0 +1,21 @@
+{
+    "module_name": "Morse Code",
+    "maintainer": "Plodah",
+    "features": {
+        
+    },
+    "keycodes": [
+        {
+            "key": "COMMUNITY_MODULE_MORSE_CODE_MANUAL",
+            "aliases": ["CM_MORS"]
+        },
+        {
+            "key": "COMMUNITY_MODULE_MORSE_CODE_DIT",
+            "aliases": ["CM_MORT"]
+        },
+        {
+            "key": "COMMUNITY_MODULE_MORSE_CODE_DASH",
+            "aliases": ["CM_MORH"]
+        }
+    ]
+}
