@@ -11,6 +11,17 @@ deferred_token msJigMainToken = INVALID_DEFERRED_TOKEN;
 deferred_token msJigIntroToken = INVALID_DEFERRED_TOKEN;
 deferred_token msJigIntroTimerToken = INVALID_DEFERRED_TOKEN;
 
+uint8_t jiggler_get_state (void) {
+  if (msJigMainToken != INVALID_DEFERRED_TOKEN){
+    if(msJigMainToken != INVALID_DEFERRED_TOKEN){
+      return 2;
+    } else {
+      return 1;
+    }
+  }
+  return 0;
+}
+
 uint32_t jiggler_pattern(int8_t deltas[], int8_t numdeltas, int8_t phasefraction, int8_t scalex, int8_t scaley, bool randomdelay, int16_t basedelay) {
   static uint8_t phase = 0;
   msJigReport.x = scalex * deltas[phase];
@@ -175,7 +186,7 @@ void jiggler_start(void) {
 void jiggler_toggle(void) {
   dprintf("jiggler_toggle %d\n", msJigMainToken);
   jiggler_intro_end();
-  if (msJigMainToken != INVALID_DEFERRED_TOKEN) {
+  if (jiggler_get_state()) {
     jiggler_end();
   } else {
     jiggler_start();
@@ -183,7 +194,7 @@ void jiggler_toggle(void) {
 }
 
 void jiggle_delay(uint16_t delay_sec) {
-  if (msJigMainToken != INVALID_DEFERRED_TOKEN) {
+  if (jiggler_get_state()) {
     extend_deferred_exec(msJigMainToken, delay_sec * 1000);
   }
 }
@@ -191,7 +202,7 @@ void jiggle_delay(uint16_t delay_sec) {
 bool process_record_mouse_jiggler(uint16_t keycode, keyrecord_t *record) {
   if (
 #if defined(MSJIGGLER_AUTOSTOP)
-      msJigMainToken != INVALID_DEFERRED_TOKEN ||
+      jiggler_get_state() ||
 #endif // MSJIGGLER_AUTOSTOP
       keycode == COMMUNITY_MODULE_MOUSE_JIGGLER_TOGGLE &&
           record->event.pressed) {

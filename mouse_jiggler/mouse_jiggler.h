@@ -4,10 +4,7 @@
 #include <stdint.h>
 #include "deferred_exec.h"
 
-deferred_token msJigMainToken;
-deferred_token msJigIntroToken;
-deferred_token msJigIntroTimerToken;
-
+uint8_t jiggler_get_state(void);
 void jiggler_end(void);
 void jiggler_start(void);
 void jiggler_toggle(void);
