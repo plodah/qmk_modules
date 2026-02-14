@@ -1,43 +1,43 @@
 #include QMK_KEYBOARD_H
-#include "repeathold_rgb.h"
+#include "rgb_repeathold.h"
 
-uint16_t repeathold_rgb_timer;
+uint16_t rgb_repeathold_timer;
 
-bool process_record_repeathold_rgb(uint16_t keycode, keyrecord_t *record) {
+bool process_record_rgb_repeathold(uint16_t keycode, keyrecord_t *record) {
 
     #if defined(RGB_MATRIX_ENABLE)
         switch(keycode){
             case RM_HUEU:
                 rm_state.hueu = record->event.pressed;
-                repeathold_rgb_timer = timer_read();
+                rgb_repeathold_timer = timer_read();
                 return false;
             case RM_HUED:
                 rm_state.hued = record->event.pressed;
-                repeathold_rgb_timer = timer_read();
+                rgb_repeathold_timer = timer_read();
                 return false;
             case RM_SATU:
                 rm_state.satu = record->event.pressed;
-                repeathold_rgb_timer = timer_read();
+                rgb_repeathold_timer = timer_read();
                 return false;
             case RM_SATD:
                 rm_state.satd = record->event.pressed;
-                repeathold_rgb_timer = timer_read();
+                rgb_repeathold_timer = timer_read();
                 return false;
             case RM_VALU:
                 rm_state.valu = record->event.pressed;
-                repeathold_rgb_timer = timer_read();
+                rgb_repeathold_timer = timer_read();
                 return false;
             case RM_VALD:
                 rm_state.vald = record->event.pressed;
-                repeathold_rgb_timer = timer_read();
+                rgb_repeathold_timer = timer_read();
                 return false;
             case RM_SPDU:
                 rm_state.spdu = record->event.pressed;
-                repeathold_rgb_timer = timer_read();
+                rgb_repeathold_timer = timer_read();
                 return false;
             case RM_SPDD:
                 rm_state.spdd = record->event.pressed;
-                repeathold_rgb_timer = timer_read();
+                rgb_repeathold_timer = timer_read();
                 return false;
         }
     #endif // RGB_MATRIX_ENABLE
@@ -46,43 +46,43 @@ bool process_record_repeathold_rgb(uint16_t keycode, keyrecord_t *record) {
         switch(keycode){
             case UG_HUEU:
                 ug_state.hueu = record->event.pressed;
-                repeathold_rgb_timer = timer_read();
+                rgb_repeathold_timer = timer_read();
                 return false;
             case UG_HUED:
                 ug_state.hued = record->event.pressed;
-                repeathold_rgb_timer = timer_read();
+                rgb_repeathold_timer = timer_read();
                 return false;
             case UG_SATU:
                 ug_state.satu = record->event.pressed;
-                repeathold_rgb_timer = timer_read();
+                rgb_repeathold_timer = timer_read();
                 return false;
             case UG_SATD:
                 ug_state.satd = record->event.pressed;
-                repeathold_rgb_timer = timer_read();
+                rgb_repeathold_timer = timer_read();
                 return false;
             case UG_VALU:
                 ug_state.valu = record->event.pressed;
-                repeathold_rgb_timer = timer_read();
+                rgb_repeathold_timer = timer_read();
                 return false;
             case UG_VALD:
                 ug_state.vald = record->event.pressed;
-                repeathold_rgb_timer = timer_read();
+                rgb_repeathold_timer = timer_read();
                 return false;
             case UG_SPDU:
                 ug_state.spdu = record->event.pressed;
-                repeathold_rgb_timer = timer_read();
+                rgb_repeathold_timer = timer_read();
                 return false;
             case UG_SPDD:
                 ug_state.spdd = record->event.pressed;
-                repeathold_rgb_timer = timer_read();
+                rgb_repeathold_timer = timer_read();
                 return false;
         }
     #endif // defined(RGBLIGHT_ENABLE)
     return true;
 }
 
-void housekeeping_task_repeathold_rgb(void){
-    if(timer_elapsed(repeathold_rgb_timer) > PLODAH_REPEATHOLD_RATE){
+void housekeeping_task_rgb_repeathold(void){
+    if(timer_elapsed(rgb_repeathold_timer) > PLODAH_REPEATHOLD_RATE){
         #if defined(RGB_MATRIX_ENABLE)
             if(rm_state.valu){
                 rgb_matrix_increase_val();
@@ -137,6 +137,6 @@ void housekeeping_task_repeathold_rgb(void){
             }
         #endif // defined(RGBLIGHT_ENABLE)
 
-        repeathold_rgb_timer = timer_read();
+        rgb_repeathold_timer = timer_read();
     }
 }
