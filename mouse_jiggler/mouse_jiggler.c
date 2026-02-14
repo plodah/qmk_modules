@@ -24,16 +24,18 @@ uint8_t jiggler_get_state (void) {
 
 uint32_t jiggler_pattern(int8_t deltas[], int8_t numdeltas, int8_t phasefraction, int8_t scalex, int8_t scaley, bool randomdelay, int16_t basedelay) {
   static uint8_t phase = 0;
+  int16_t delay;
   msJigReport.x = scalex * deltas[phase];
   msJigReport.y = scaley * deltas[(phase + (numdeltas / phasefraction)) & (numdeltas - 1)];
   host_mouse_send(&msJigReport);
   phase = (phase + 1) & (numdeltas - 1);
-  if (randomdelay) {
-    dprintf("jiggle next:%i\n", (basedelay + deltas[phase] * basedelay / 4 + phase * basedelay / 10));
-    return basedelay + deltas[phase] * basedelay / 4 + phase * basedelay / 10;
+  if(randomdelay){
+    delay = basedelay + deltas[phase] * basedelay / 4 + phase * basedelay / 10;
+  } else {
+    delay = basedelay;
   }
-  dprintf("jiggle next:%i\n", basedelay);
-  return basedelay;
+  dprintf("jiggle next:%i\n", delay);
+  return delay;
 }
 
 void jiggler_intro_end(void) {
