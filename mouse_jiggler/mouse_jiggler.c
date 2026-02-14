@@ -13,7 +13,7 @@ deferred_token msJigIntroTimerToken = INVALID_DEFERRED_TOKEN;
 
 uint8_t jiggler_get_state (void) {
   if (msJigMainToken != INVALID_DEFERRED_TOKEN){
-    if(msJigMainToken != INVALID_DEFERRED_TOKEN){
+    if(msJigIntroToken != INVALID_DEFERRED_TOKEN){
       return 2;
     } else {
       return 1;
@@ -154,7 +154,7 @@ void jiggler_start(void) {
 #elif MSJIGGLER_PATTERN == MSJIGGLER_PATTERN_SQUARE
   msJigMainToken = defer_exec(1, jiggler_square, NULL);
 #endif // MSJIGGLER_PATTERN
-  
+
 #if !defined(MSJIGGLER_NOINTRO)
   #if MSJIGGLER_PATTERN_INTRO == MSJIGGLER_PATTERN_SUBTLE
     msJigIntroToken = defer_exec(1, jiggler_subtle, NULL);
