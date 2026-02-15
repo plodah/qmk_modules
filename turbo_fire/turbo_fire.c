@@ -3,8 +3,8 @@
 
 uint16_t keycodes[TURBO_FIRE_KEYCOUNT];
 deferred_token tokens[TURBO_FIRE_KEYCOUNT];
-uint8_t  rate = TURBO_FIRE_RATE;
-uint8_t  duration = TURBO_FIRE_DURATION;
+uint16_t rate = TURBO_FIRE_RATE;
+uint8_t duration = TURBO_FIRE_DURATION;
 
 uint8_t get_turbo_fire_keycount ( void ){
     return TURBO_FIRE_KEYCOUNT;
@@ -18,11 +18,11 @@ uint16_t get_turbo_fire_keycode ( uint8_t index ){
     return keycodes[index];
 }
 
-void set_turbo_fire_rate ( uint8_t newrate ){
+void set_turbo_fire_rate ( uint16_t newrate ){
     rate = newrate;
 }
 
-uint8_t get_turbo_fire_rate ( void ){
+uint16_t get_turbo_fire_rate ( void ){
     return rate;
 }
 
