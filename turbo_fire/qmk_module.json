@@ -35,6 +35,38 @@
         {
             "key": "COMMUNITY_MODULE_TURBO_D_MOMENTARY",
             "aliases": ["CM_TTDM"]
+        },
+        {
+            "key": "COMMUNITY_MODULE_TURBO_E_TOGGLE",
+            "aliases": ["CM_TTET"]
+        },
+        {
+            "key": "COMMUNITY_MODULE_TURBO_E_MOMENTARY",
+            "aliases": ["CM_TTEM"]
+        },
+        {
+            "key": "COMMUNITY_MODULE_TURBO_F_TOGGLE",
+            "aliases": ["CM_TTFT"]
+        },
+        {
+            "key": "COMMUNITY_MODULE_TURBO_F_MOMENTARY",
+            "aliases": ["CM_TTFM"]
+        },
+        {
+            "key": "COMMUNITY_MODULE_TURBO_G_TOGGLE",
+            "aliases": ["CM_TTGT"]
+        },
+        {
+            "key": "COMMUNITY_MODULE_TURBO_G_MOMENTARY",
+            "aliases": ["CM_TTGM"]
+        },
+        {
+            "key": "COMMUNITY_MODULE_TURBO_H_TOGGLE",
+            "aliases": ["CM_TTHT"]
+        },
+        {
+            "key": "COMMUNITY_MODULE_TURBO_H_MOMENTARY",
+            "aliases": ["CM_TTHM"]
         }
     ]
 }

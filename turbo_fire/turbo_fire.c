@@ -1,141 +1,129 @@
 #include QMK_KEYBOARD_H
 #include "turbo_fire.h"
 
-uint16_t keycode_a = TURBO_FIRE_KEY_A;
-uint16_t keycode_b = TURBO_FIRE_KEY_B;
-uint16_t keycode_c = TURBO_FIRE_KEY_C;
-uint16_t keycode_d = TURBO_FIRE_KEY_D;
+uint16_t keycodes[TURBO_FIRE_KEYCOUNT];
+deferred_token tokens[TURBO_FIRE_KEYCOUNT];
 uint8_t  rate = TURBO_FIRE_RATE;
-deferred_token token_a;
-deferred_token token_b;
-deferred_token token_c;
-deferred_token token_d;
+uint8_t  duration = TURBO_FIRE_DURATION;
+
+uint8_t get_turbo_fire_keycount ( void ){
+    return TURBO_FIRE_KEYCOUNT;
+}
+
+void set_turbo_fire_keycode ( uint8_t index, int16_t keycode ){
+    keycodes[index] = keycode;
+}
+
+uint16_t get_turbo_fire_keycode ( uint8_t index ){
+    return keycodes[index];
+}
+
+void set_turbo_fire_rate ( uint8_t newrate ){
+    rate = newrate;
+}
+
+uint8_t get_turbo_fire_rate ( void ){
+    return rate;
+}
+
+void set_turbo_fire_duration ( uint8_t newduration ){
+    duration = newduration;
+}
+
+uint8_t get_turbo_fire_duration ( void ){
+    return duration;
+}
+
+void keyboard_post_init_turbo_fire (void) {
+    for (uint8_t i = 0; i < TURBO_FIRE_KEYCOUNT; i++) {
+        keycodes[i] = default_keycodes[i];
+    }
+}
 
 uint32_t turbo_fire(uint32_t trigger_time, void *cb_arg) {
     #if defined(QMK_MCU_RP2040)
-        tap_code16( ((uint32_t)cb_arg) & 0xFFFF );
+        tap_code16_delay( ((uint32_t)cb_arg) & 0xFFFF, duration );
     #else // QMK_MCU_RP2040
-        tap_code16( (uint16_t)(cb_arg) );
+        tap_code16_delay( (uint16_t)(cb_arg), duration );
     #endif // QMK_MCU_RP2040
     return rate;
 }
 
 bool process_record_turbo_fire(uint16_t keycode, keyrecord_t *record){
+    uint16_t kc_index;
     switch(keycode) {
-
         case COMMUNITY_MODULE_TURBO_A_TOGGLE:
+        #if TURBO_FIRE_KEYCOUNT > 1
+            case COMMUNITY_MODULE_TURBO_B_TOGGLE:
+        #endif
+        #if TURBO_FIRE_KEYCOUNT > 2
+            case COMMUNITY_MODULE_TURBO_C_TOGGLE:
+        #endif
+        #if TURBO_FIRE_KEYCOUNT > 3
+            case COMMUNITY_MODULE_TURBO_D_TOGGLE:
+        #endif
+        #if TURBO_FIRE_KEYCOUNT > 4
+            case COMMUNITY_MODULE_TURBO_E_TOGGLE:
+        #endif
+        #if TURBO_FIRE_KEYCOUNT > 5
+            case COMMUNITY_MODULE_TURBO_F_TOGGLE:
+        #endif
+        #if TURBO_FIRE_KEYCOUNT > 6
+            case COMMUNITY_MODULE_TURBO_G_TOGGLE:
+        #endif
+        #if TURBO_FIRE_KEYCOUNT > 7
+            case COMMUNITY_MODULE_TURBO_H_TOGGLE:
+        #endif
+            kc_index = keycode - COMMUNITY_MODULE_TURBO_A_TOGGLE;
+            dprintf("kc:%d index: %d\n", keycode, kc_index);
             if(record->event.pressed){
-                if(token_a == INVALID_DEFERRED_TOKEN ){
+                if(tokens[kc_index] == INVALID_DEFERRED_TOKEN ){
                     #if defined(QMK_MCU_RP2040)
-                        token_a = defer_exec(rate, turbo_fire, (void *)((uint32_t)keycode_a));
+                        tokens[kc_index] = defer_exec(rate, turbo_fire, (void *)((uint32_t)keycodes[kc_index]));
                     #else // QMK_MCU_RP2040
-                        token_a = defer_exec(rate, turbo_fire, (void *)keycode_a);
+                        tokens[kc_index] = defer_exec(rate, turbo_fire, (void *)keycodes[kc_index]);
                     #endif // QMK_MCU_RP2040
                 }
                 else{
-                    cancel_deferred_exec(token_a);
-                    token_a = INVALID_DEFERRED_TOKEN;
+                    cancel_deferred_exec(tokens[kc_index]);
+                    tokens[kc_index] = INVALID_DEFERRED_TOKEN;
                 }
             }
             return false;
         case COMMUNITY_MODULE_TURBO_A_MOMENTARY:
+        #if TURBO_FIRE_KEYCOUNT > 1
+            case COMMUNITY_MODULE_TURBO_B_MOMENTARY:
+        #endif
+        #if TURBO_FIRE_KEYCOUNT > 2
+            case COMMUNITY_MODULE_TURBO_C_MOMENTARY:
+        #endif
+        #if TURBO_FIRE_KEYCOUNT > 3
+            case COMMUNITY_MODULE_TURBO_D_MOMENTARY:
+        #endif
+        #if TURBO_FIRE_KEYCOUNT > 4
+            case COMMUNITY_MODULE_TURBO_E_MOMENTARY:
+        #endif
+        #if TURBO_FIRE_KEYCOUNT > 5
+            case COMMUNITY_MODULE_TURBO_F_MOMENTARY:
+        #endif
+        #if TURBO_FIRE_KEYCOUNT > 6
+            case COMMUNITY_MODULE_TURBO_G_MOMENTARY:
+        #endif
+        #if TURBO_FIRE_KEYCOUNT > 7
+            case COMMUNITY_MODULE_TURBO_H_MOMENTARY:
+        #endif
+            kc_index = keycode - COMMUNITY_MODULE_TURBO_A_TOGGLE;
+            dprintf("kc:%d index: %d\n", keycode, kc_index);
             if(record->event.pressed){
                 #if defined(QMK_MCU_RP2040)
-                    token_a = defer_exec(rate, turbo_fire, (void *)((uint32_t)keycode_a));
+                    tokens[kc_index] = defer_exec(rate, turbo_fire, (void *)((uint32_t)keycodes[kc_index]));
                 #else // QMK_MCU_RP2040
-                    token_a = defer_exec(rate, turbo_fire, (void *)keycode_a);
+                    tokens[kc_index] = defer_exec(rate, turbo_fire, (void *)keycodes[kc_index]);
                 #endif // QMK_MCU_RP2040
             }
             else{
-                cancel_deferred_exec(token_a);
-                token_a = INVALID_DEFERRED_TOKEN;
-            }
-            return false;
-
-        case COMMUNITY_MODULE_TURBO_B_TOGGLE:
-            if(record->event.pressed){
-                if(token_b == INVALID_DEFERRED_TOKEN ){
-                    #if defined(QMK_MCU_RP2040)
-                        token_b = defer_exec(rate, turbo_fire, (void *)((uint32_t)keycode_b));
-                    #else // QMK_MCU_RP2040
-                        token_b = defer_exec(rate, turbo_fire, (void *)keycode_b);
-                    #endif // QMK_MCU_RP2040
-                }
-                else{
-                    cancel_deferred_exec(token_b);
-                    token_b = INVALID_DEFERRED_TOKEN;
-                }
-            }
-            return false;
-        case COMMUNITY_MODULE_TURBO_B_MOMENTARY:
-            if(record->event.pressed){
-                #if defined(QMK_MCU_RP2040)
-                    token_b = defer_exec(rate, turbo_fire, (void *)((uint32_t)keycode_b));
-                #else // QMK_MCU_RP2040
-                    token_b = defer_exec(rate, turbo_fire, (void *)keycode_b);
-                #endif // QMK_MCU_RP2040
-            }
-            else{
-                cancel_deferred_exec(token_b);
-                token_b = INVALID_DEFERRED_TOKEN;
-            }
-            return false;
-
-        case COMMUNITY_MODULE_TURBO_C_TOGGLE:
-            if(record->event.pressed){
-                if(token_c == INVALID_DEFERRED_TOKEN ){
-                    #if defined(QMK_MCU_RP2040)
-                        token_c = defer_exec(rate, turbo_fire, (void *)((uint32_t)keycode_c));
-                    #else // QMK_MCU_RP2040
-                        token_c = defer_exec(rate, turbo_fire, (void *)keycode_c);
-                    #endif // QMK_MCU_RP2040
-                }
-                else{
-                    cancel_deferred_exec(token_c);
-                    token_c = INVALID_DEFERRED_TOKEN;
-                }
-            }
-            return false;
-        case COMMUNITY_MODULE_TURBO_C_MOMENTARY:
-            if(record->event.pressed){
-                #if defined(QMK_MCU_RP2040)
-                    token_c = defer_exec(rate, turbo_fire, (void *)((uint32_t)keycode_c));
-                #else // QMK_MCU_RP2040
-                    token_c = defer_exec(rate, turbo_fire, (void *)keycode_c);
-                #endif // QMK_MCU_RP2040
-            }
-            else{
-                cancel_deferred_exec(token_c);
-                token_c = INVALID_DEFERRED_TOKEN;
-            }
-            return false;
-
-        case COMMUNITY_MODULE_TURBO_D_TOGGLE:
-            if(record->event.pressed){
-                if(token_d == INVALID_DEFERRED_TOKEN ){
-                    #if defined(QMK_MCU_RP2040)
-                        token_d = defer_exec(rate, turbo_fire, (void *)((uint32_t)keycode_d));
-                    #else // QMK_MCU_RP2040
-                        token_d = defer_exec(rate, turbo_fire, (void *)keycode_d);
-                    #endif // QMK_MCU_RP2040
-                }
-                else{
-                    cancel_deferred_exec(token_d);
-                    token_d = INVALID_DEFERRED_TOKEN;
-                }
-            }
-            return false;
-        case COMMUNITY_MODULE_TURBO_D_MOMENTARY:
-            if(record->event.pressed){
-                #if defined(QMK_MCU_RP2040)
-                    token_d = defer_exec(rate, turbo_fire, (void *)((uint32_t)keycode_d));
-                #else // QMK_MCU_RP2040
-                    token_d = defer_exec(rate, turbo_fire, (void *)keycode_d);
-                #endif // QMK_MCU_RP2040
-            }
-            else{
-                cancel_deferred_exec(token_d);
-                token_d = INVALID_DEFERRED_TOKEN;
+                cancel_deferred_exec(tokens[kc_index]);
+                tokens[kc_index] = INVALID_DEFERRED_TOKEN;
             }
             return false;
     }
