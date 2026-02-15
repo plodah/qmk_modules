@@ -19,15 +19,7 @@
     #define TURBO_FIRE_DURATION 10
 #endif // TURBO_FIRE_DURATION
 
-/*
-uint16_t default_keycodes[]={
-    MS_BTN1,
-    MS_BTN2,
-    KC_A,
-    KC_B,
-};
-*/
-uint16_t default_keycodes[]={
+static const uint16_t default_turbofire_keycodes[]={
     MS_BTN1,
     #if TURBO_FIRE_KEYCOUNT > 1
         MS_BTN2,
@@ -51,6 +43,7 @@ uint16_t default_keycodes[]={
         KC_F,
     #endif
 };
+
 uint8_t get_turbo_fire_keycount ( void );
 void set_turbo_fire_keycode ( uint8_t index, int16_t keycode );
 uint16_t get_turbo_fire_keycode ( uint8_t index );
