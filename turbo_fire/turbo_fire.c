@@ -11,6 +11,7 @@ uint8_t get_turbo_fire_keycount ( void ){
 }
 
 void set_turbo_fire_keycode ( uint8_t index, int16_t keycode ){
+    dprintf("set_turbo_fire_keycode i:%d kc:%d\n", index, keycode);
     keycodes[index] = keycode;
 }
 
@@ -19,6 +20,7 @@ uint16_t get_turbo_fire_keycode ( uint8_t index ){
 }
 
 void set_turbo_fire_rate ( uint16_t newrate ){
+    dprintf("set_turbo_fire_rate %d\n", newrate);
     rate = newrate;
 }
 
@@ -27,6 +29,7 @@ uint16_t get_turbo_fire_rate ( void ){
 }
 
 void set_turbo_fire_duration ( uint8_t newduration ){
+    dprintf("set_turbo_fire_duration %d\n", newduration);
     duration = newduration;
 }
 
@@ -41,11 +44,14 @@ void keyboard_post_init_turbo_fire (void) {
 }
 
 uint32_t turbo_fire(uint32_t trigger_time, void *cb_arg) {
+    uint16_t tmpkc;
     #if defined(QMK_MCU_RP2040)
-        tap_code16_delay( ((uint32_t)cb_arg) & 0xFFFF, duration );
+        tmpkc = ((uint32_t)cb_arg) & 0xFFFF;
     #else // QMK_MCU_RP2040
-        tap_code16_delay( (uint16_t)(cb_arg), duration );
+        tmpkc = (uint16_t)(cb_arg);
     #endif // QMK_MCU_RP2040
+    dprintf("FIRE: kc:%d, duration:%d rate: %d\n", tmpkc, duration, rate);
+    tap_code16_delay( tmpkc, duration );
     return rate;
 }
 
