@@ -36,7 +36,7 @@ uint8_t get_turbo_fire_duration ( void ){
 
 void keyboard_post_init_turbo_fire (void) {
     for (uint8_t i = 0; i < TURBO_FIRE_KEYCOUNT; i++) {
-        keycodes[i] = default_turbofire_keycodes[i];
+        keycodes[i] = default_turbo_fire_keycodes[i];
     }
 }
 

@@ -19,7 +19,7 @@
     #define TURBO_FIRE_DURATION 10
 #endif // TURBO_FIRE_DURATION
 
-static const uint16_t default_turbofire_keycodes[]={
+static const uint16_t default_turbo_fire_keycodes[]={
     MS_BTN1,
     #if TURBO_FIRE_KEYCOUNT > 1
         MS_BTN2,
