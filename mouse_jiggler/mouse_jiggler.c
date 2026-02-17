@@ -199,14 +199,14 @@ void jiggler_start(void) {
             msJigIntroToken = defer_exec(1, jiggler_square, NULL);
         #endif // MSJIGGLER_PATTERN_INTRO
         #if defined(MSJIGGLER_INTRO_TIMEOUT)
-            dprintf("intro timer: MSJIGGLER_INTRO_TIMEOUT \n");
+            dprintf("intro timer: %dms \n", MSJIGGLER_INTRO_TIMEOUT);
             msJigIntroTimerToken = defer_exec(MSJIGGLER_INTRO_TIMEOUT, jiggler_introtimer, NULL);
         #endif // MSJIGGLER_INTRO_TIMEOUT
     #endif // !defined(MSJIGGLER_NOINTRO)
 }
 
 void jiggler_toggle(void) {
-    dprintf("jiggler_toggle %d\n", msJigMainToken);
+    dprintf("jiggler_toggle\n");
     jiggler_intro_end();
     if (jiggler_get_state()) {
         jiggler_end();
