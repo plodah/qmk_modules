@@ -141,41 +141,56 @@ void jiggler_end(void) {
 
 void jiggler_start(void) {
     dprintf("jiggler_start\n");
-
     #if MSJIGGLER_PATTERN == MSJIGGLER_PATTERN_SUBTLE
+        dprintf("intro:MSJIGGLER_PATTERN_SUBTLE");
         msJigMainToken = defer_exec(1, jiggler_subtle, NULL);
     #elif MSJIGGLER_PATTERN == MSJIGGLER_PATTERN_XLINE
+        dprintf("intro:MSJIGGLER_PATTERN_XLINE");
         msJigMainToken = defer_exec(1, jiggler_xline, NULL);
     #elif MSJIGGLER_PATTERN == MSJIGGLER_PATTERN_YLINE
+        dprintf("intro:MSJIGGLER_PATTERN_YLINE");
         msJigMainToken = defer_exec(1, jiggler_yline, NULL);
     #elif MSJIGGLER_PATTERN == MSJIGGLER_PATTERN_CIRCLE
+        dprintf("intro:MSJIGGLER_PATTERN_CIRCLE");
         msJigMainToken = defer_exec(1, jiggler_circle, NULL);
     #elif MSJIGGLER_PATTERN == MSJIGGLER_PATTERN_CIRCLESMALL
+        dprintf("intro:MSJIGGLER_PATTERN_CIRCLESMALL");
         msJigMainToken = defer_exec(1, jiggler_circle_small, NULL);
     #elif MSJIGGLER_PATTERN == MSJIGGLER_PATTERN_CIRCLECCW
+        dprintf("intro:MSJIGGLER_PATTERN_CIRCLECCW");
         msJigMainToken = defer_exec(1, jiggler_circle_ccw, NULL);
     #elif MSJIGGLER_PATTERN == MSJIGGLER_PATTERN_CIRCLECCWSMALL
+        dprintf("intro:MSJIGGLER_PATTERN_CIRCLECCWSMALL");
         msJigMainToken = defer_exec(1, jiggler_circle_ccw_small, NULL);
     #elif MSJIGGLER_PATTERN == MSJIGGLER_PATTERN_FIGURE
+        dprintf("intro:MSJIGGLER_PATTERN_FIGURE");
         msJigMainToken = defer_exec(1, jiggler_figure, NULL);
     #elif MSJIGGLER_PATTERN == MSJIGGLER_PATTERN_SQUARE
+        dprintf("intro:MSJIGGLER_PATTERN_SQUARE");
         msJigMainToken = defer_exec(1, jiggler_square, NULL);
     #endif // MSJIGGLER_PATTERN
 
     #if !defined(MSJIGGLER_NOINTRO)
         #if MSJIGGLER_PATTERN_INTRO == MSJIGGLER_PATTERN_SUBTLE
+            dprintf("intro:MSJIGGLER_PATTERN_SUBTLE");
             msJigIntroToken = defer_exec(1, jiggler_subtle, NULL);
         #elif MSJIGGLER_PATTERN_INTRO == MSJIGGLER_PATTERN_XLINE
+            dprintf("intro:MSJIGGLER_PATTERN_XLINE");
             msJigIntroToken = defer_exec(1, jiggler_xline, NULL);
         #elif MSJIGGLER_PATTERN_INTRO == MSJIGGLER_PATTERN_YLINE
+            dprintf("intro:MSJIGGLER_PATTERN_YLINE");
             msJigIntroToken = defer_exec(1, jiggler_yline, NULL);
         #elif MSJIGGLER_PATTERN_INTRO == MSJIGGLER_PATTERN_CIRCLE
+            dprintf("intro:MSJIGGLER_PATTERN_CIRCLE");
             msJigIntroToken = defer_exec(1, jiggler_circle, NULL);
         #elif MSJIGGLER_PATTERN_INTRO == MSJIGGLER_PATTERN_CIRCLESMALL
+            dprintf("intro:MSJIGGLER_PATTERN_CIRCLESMALL");
             msJigIntroToken = defer_exec(1, jiggler_circle_small, NULL);
         #elif MSJIGGLER_PATTERN_INTRO == MSJIGGLER_PATTERN_CIRCLECCW
+            dprintf("intro:MSJIGGLER_PATTERN_CIRCLECCW");
             msJigIntroToken = defer_exec(1, jiggler_circle_ccw, NULL);
         #elif MSJIGGLER_PATTERN_INTRO == MSJIGGLER_PATTERN_CIRCLECCWSMALL
+            dprintf("intro:MSJIGGLER_PATTERN_CIRCLECCWSMALL");
             msJigIntroToken = defer_exec(1, jiggler_circle_ccw_small, NULL);
         #elif MSJIGGLER_PATTERN_INTRO == MSJIGGLER_PATTERN_FIGURE
             dprintf("intro:MSJIGGLER_PATTERN_FIGURE");
