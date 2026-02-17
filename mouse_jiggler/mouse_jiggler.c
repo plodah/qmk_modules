@@ -24,7 +24,7 @@ uint8_t jiggler_get_state (void) {
 
 uint32_t jiggler_pattern(int8_t deltas[], int8_t numdeltas, int8_t phasefraction, int8_t scalex, int8_t scaley, bool randomdelay, int16_t basedelay) {
     static uint8_t phase = 0;
-    int16_t delay;
+    uint32_t delay;
     msJigReport.x = scalex * deltas[phase];
     msJigReport.y = scaley * deltas[(phase + (numdeltas / phasefraction)) & (numdeltas - 1)];
     host_mouse_send(&msJigReport);
@@ -34,7 +34,12 @@ uint32_t jiggler_pattern(int8_t deltas[], int8_t numdeltas, int8_t phasefraction
     } else {
         delay = basedelay;
     }
-    dprintf("jiggle next:%i\n", delay);
+    if(delay>=10000){
+        dprintf("msjg; next: %ds\n", (uint16_t)(delay/1000));
+    }
+    else{
+        dprintf("msjg; next: %dms\n", (uint16_t)(delay));
+    }
     return delay;
 }
 
@@ -195,10 +200,10 @@ void jiggler_toggle(void) {
     }
 }
 
-void jiggle_delay(uint16_t delay_sec) {
+void jiggle_delay(uint32_t delay_sec) {
     if (jiggler_get_state()) {
-        extend_deferred_exec(msJigMainToken, delay_sec * 1000);
         // dprintf("delay the jiggles\n");
+        extend_deferred_exec(msJigMainToken, delay_sec * 1000);
     }
 }
 

@@ -8,7 +8,7 @@ uint8_t jiggler_get_state(void);
 void jiggler_end(void);
 void jiggler_start(void);
 void jiggler_toggle(void);
-void jiggle_delay(uint16_t delay_sec);
+void jiggle_delay(uint32_t delay_sec);
 
 #if (!defined(MSJIGGLER_NOINTRO)) && (!defined(MSJIGGLER_INTRO_TIMEOUT))
     #define MSJIGGLER_INTRO_TIMEOUT 1000
