@@ -1,0 +1,16 @@
+{
+    "module_name": "Basic Pointing Device Acceleration",
+    "maintainer": "Plodah",
+    "features": {
+        "pointing_device": true
+    },
+    "keycodes": [
+        {
+            "aliases": [
+                "MA_TOGG"
+            ],
+            "key": "CM_MOUSE_ACCEL_TOGGLE"
+        }
+    ],
+    "license": "GPL-2.0-or-later"
+}
