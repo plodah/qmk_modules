@@ -37,7 +37,7 @@ void pmw_rotation_sensor_to_config (void) {
 
 bool process_record_pmw_rotation (uint16_t keycode, keyrecord_t *record) {
     if(record->event.pressed){
-        dprintf("process_record_pmw_rotation\n");
+        // dprintf("process_record_pmw_rotation\n");
         switch (keycode) {
             case COMMUNITY_MODULE_PMW_ROTATE_CCW:
                 pmw_rotation_set_config(false, PMW_ROTATION_STEP_SIZE);
