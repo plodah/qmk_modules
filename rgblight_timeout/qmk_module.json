@@ -1,0 +1,7 @@
+{
+    "module_name": "rgblight_timeout",
+    "maintainer": "Plodah",
+    "features": {
+        "rgblight": true
+    }
+}
