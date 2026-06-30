@@ -1,3 +1,4 @@
+#include QMK_KEYBOARD_H
 #include "rgb_indicators.h"
 
 #if defined(COMMUNITY_MODULE_MOUSE_JIGGLER_ENABLE)

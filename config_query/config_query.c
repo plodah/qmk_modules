@@ -1,6 +1,6 @@
-#include <stdbool.h>
-#include "quantum.h"
+#include QMK_KEYBOARD_H
 #include "config_query.h"
+#include "version.h"
 
 #if !defined(CM_QFTR_DISABLED)
     char* queryFeatures(void) {

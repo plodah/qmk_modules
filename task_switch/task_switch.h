@@ -1,8 +1,5 @@
 #pragma once
 
-#include <sys/types.h>
-#include QMK_KEYBOARD_H
-
 #ifndef TASKSWITCH_DELAY
     #define TASKSWITCH_DELAY 1000
 #endif // TASKSWITCH_DELAY

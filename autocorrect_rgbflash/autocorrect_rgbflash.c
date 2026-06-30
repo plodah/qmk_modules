@@ -1,3 +1,4 @@
+#include QMK_KEYBOARD_H
 #include "autocorrect_rgbflash.h"
 
 uint8_t autocorrect_rgbflash_count = 255;
@@ -23,12 +24,12 @@ deferred_token autoCorrectIndToken = INVALID_DEFERRED_TOKEN;
 
 void autocorrect_rgbflash_switch_on(void) {
 #if defined(RGB_MATRIX_ENABLE)
-  HSV indhsv = rgbhelpers_limit_ind(rgb_matrix_get_hsv(), AUTOCORRECT_RGBFLASH_COLOR, AUTOCORRECT_RGBFLASH_MINVAL);
+  hsv_t indhsv = rgbhelpers_limit_ind(rgb_matrix_get_hsv(), AUTOCORRECT_RGBFLASH_COLOR, AUTOCORRECT_RGBFLASH_MINVAL);
   rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR);
   rgb_matrix_sethsv_noeeprom(indhsv.h, indhsv.s, indhsv.v);
 #endif // RGB_MATRIX_ENABLE
 #if defined(RGBLIGHT_ENABLE)
-  HSV indhsv = {rgblight_get_hue(), rgblight_get_sat(), rgblight_get_val()};
+  hsv_t indhsv = {rgblight_get_hue(), rgblight_get_sat(), rgblight_get_val()};
   indhsv = rgbhelpers_limit_ind(indhsv, AUTOCORRECT_RGBFLASH_COLOR, AUTOCORRECT_RGBFLASH_MINVAL);
   rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
   rgblight_sethsv_noeeprom(indhsv.h, indhsv.s, indhsv.v);

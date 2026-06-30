@@ -1,5 +1,4 @@
 #pragma once
-#include "quantum.h"
 
 void queryFeaturesSs(void);
 void queryLayersSs(void);

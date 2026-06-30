@@ -18,16 +18,15 @@
 
 #include QMK_KEYBOARD_H
 
-#include <stdint.h>
-#include <stdbool.h>
-#include "morse_code.h"
-
 uint16_t timer_started = 0;
 uint16_t timer_ended = 0;
 uint8_t  code_length = 0;
 uint16_t code = 0;
 
 uint8_t modifiers = 0;
+
+#define DIT_DURATION 100
+#define SHORT_GAP (DIT_DURATION * 3)
 
 bool process_record_morse_code(uint16_t keycode, keyrecord_t *record) {
     switch(keycode) {

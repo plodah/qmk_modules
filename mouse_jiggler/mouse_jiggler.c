@@ -3,7 +3,6 @@
 // make this.
 
 #include QMK_KEYBOARD_H
-#include <stdbool.h>
 #include "mouse_jiggler.h"
 
 report_mouse_t msJigReport = {0};

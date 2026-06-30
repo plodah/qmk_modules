@@ -1,2 +1,0 @@
-#define DIT_DURATION 100
-#define SHORT_GAP (DIT_DURATION * 3)

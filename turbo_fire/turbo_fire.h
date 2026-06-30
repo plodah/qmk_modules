@@ -1,5 +1,4 @@
 #pragma once
-#include QMK_KEYBOARD_H
 
 #if ! defined(TURBO_FIRE_KEYCOUNT)
     #define TURBO_FIRE_KEYCOUNT 4

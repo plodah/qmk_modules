@@ -1,6 +1,4 @@
 #pragma once
-
-#include "quantum.h"
 #include "rgb_helpers.h"
 
 #if !defined(PLODAH_RGBINDICATORS_MODS_HSV)

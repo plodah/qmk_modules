@@ -1,4 +1,4 @@
-#include "quantum.h"
+#include QMK_KEYBOARD_H
 #include "dragscroll_straighten.h"
 
 int8_t history_x[SCROLL_HISTORY_SIZE];

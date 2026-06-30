@@ -1,3 +1,4 @@
+#include QMK_KEYBOARD_H
 #include "comboflow.h"
 #include "deferred_exec.h"
 #include "process_combo.h"

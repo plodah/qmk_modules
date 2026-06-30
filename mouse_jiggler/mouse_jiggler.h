@@ -1,9 +1,5 @@
 #pragma once
 
-#include QMK_KEYBOARD_H
-#include <stdint.h>
-#include "deferred_exec.h"
-
 uint8_t jiggler_get_state(void);
 void jiggler_end(void);
 void jiggler_start(void);
