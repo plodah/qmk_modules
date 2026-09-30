@@ -1,24 +1,92 @@
 #include QMK_KEYBOARD_H
 #include "dragscroll_straighten.h"
 
+#if defined(DRAGSCROLL_STRAIGHTEN_NOEEPROM)
+    uint8_t sensitivity;
+    bool    ds_str_state;
+#else
+    #include "eeconfig.h"
+    typedef struct dragscroll_straighten_config_t {
+        bool     state      : 1;
+        uint8_t  sensitivity  : 7;
+    } dragscroll_straighten_config_t;
+    dragscroll_straighten_config_t dragscroll_straighten_config;
+    dragscroll_straighten_config_t dragscroll_straighten_default_config = {
+        #ifdef DRAGSCROLL_STRAIGHTEN_SENSITIVITY
+            .state          = true,
+            .sensitivity    = DRAGSCROLL_STRAIGHTEN_SENSITIVITY,
+        #else // DRAGSCROLL_STRAIGHTEN_SENSITIVITY
+            .state          = false,
+            .sensitivity    = 80,
+        #endif // DRAGSCROLL_STRAIGHTEN_SENSITIVITY
+    };
+
+    _Static_assert(sizeof(dragscroll_straighten_config_t) <= EECONFIG_MODULE_DRAGSCROLL_STRAIGHTEN_DATA_SIZE, "EECONFIG_MODULE_DRAGSCROLL_STRAIGHTEN_DATA_SIZE is too small");
+
+    void eeconfig_read_dragscroll_straighten(dragscroll_straighten_config_t *value) {
+        eeconfig_read_dragscroll_straighten_datablock(value, 0, sizeof(dragscroll_straighten_config_t));
+    }
+
+    void eeconfig_update_dragscroll_straighten(dragscroll_straighten_config_t *value) {
+        eeconfig_update_dragscroll_straighten_datablock(value, 0, sizeof(dragscroll_straighten_config_t));
+    }
+
+    EECONFIG_DEBOUNCE_HELPER(dragscroll_straighten, dragscroll_straighten_config);
+
+    void keyboard_post_init_dragscroll_straighten(void) {
+        eeconfig_init_dragscroll_straighten();
+    }
+
+    void eeconfig_init_dragscroll_straighten_datablock(void) {
+        dragscroll_straighten_config = dragscroll_straighten_default_config;
+        eeconfig_flush_dragscroll_straighten(true);
+    }
+
+    void housekeeping_task_dragscroll_straighten(void) {
+        eeconfig_flush_dragscroll_straighten_task(1000);
+    }
+#endif
+
 int8_t history_x[SCROLL_HISTORY_SIZE];
 int8_t history_y[SCROLL_HISTORY_SIZE];
 uint16_t history_time[SCROLL_HISTORY_SIZE];
 uint8_t history_head;
 uint8_t history_tail;
-uint8_t sensitivity;
-
 bool drgstraight_cancel_x;
 bool drgstraight_cancel_y;
-uint8_t drgstraight_get_sensitivity(){
-    return sensitivity;
+
+bool drgstraight_get_state(void){
+    #if defined(DRAGSCROLL_STRAIGHTEN_NOEEPROM)
+      return ds_str_state;
+    #else
+      return dragscroll_straighten_config.state;
+    #endif
 }
+
+bool drgstraight_set_state(bool newstate){
+    #if defined(DRAGSCROLL_STRAIGHTEN_NOEEPROM)
+      ds_str_state = newstate;
+    #else
+      return dragscroll_straighten_config.state;
+    #endif
+}
+
+uint8_t drgstraight_get_sensitivity(void){
+    #if defined(DRAGSCROLL_STRAIGHTEN_NOEEPROM)
+      return sensitivity;
+    #else
+      return dragscroll_straighten_config.sensitivity;
+    #endif
+}
+
 void drgstraight_set_sensitivity(uint8_t value){
-    if(value > 100){
-        sensitivity=100;
-    } else{
+    if(value > 100){ value = 100; }
+    #if defined(DRAGSCROLL_STRAIGHTEN_NOEEPROM)
         sensitivity = value;
-    }
+    #else
+        dragscroll_straighten_config.sensitivity = value;
+        eeconfig_flag_dragscroll_straighten(true);
+    #endif
 }
 
 void drgstraight_reset( void ){
@@ -39,7 +107,7 @@ report_mouse_t pointing_device_task_dragscroll_straighten(report_mouse_t mouse_r
     // When sampling frequency elapsed
     drgstraight_cancel_x = false;
     drgstraight_cancel_y = false;
-    if ( !sensitivity ){ return mouse_report; }
+    if ( !(drgstraight_get_state() && drgstraight_get_sensitivity()) ){ return mouse_report; }
     if (timer_elapsed(history_time[history_head]) > SCROLL_HISTORY_FREQ) {
         //advance the head of the buffer.
         history_head = (history_head + 1) % SCROLL_HISTORY_SIZE;
@@ -69,13 +137,13 @@ report_mouse_t pointing_device_task_dragscroll_straighten(report_mouse_t mouse_r
     }
 
     // If [sensitivity %] of VERTICAL momentum exceeds HORIZONTAL momentum
-    if ( ((float)sensitivity / (float)100) * momentum_y > momentum_x ){
+    if ( ((float)drgstraight_get_sensitivity() / (float)100) * momentum_y > momentum_x ){
         // Clear HORIZONTAL accumulation
         drgstraight_cancel_x = true;
         // dprintf("cleared horizontal accumulation \n");
     }
     // If [sensitivity %] of HORIZONTAL momentum exceeds VERTICAL momentum
-    else if ( ((float)sensitivity / (float)100) * momentum_x > momentum_y ){
+    else if ( ((float)drgstraight_get_sensitivity() / (float)100) * momentum_x > momentum_y ){
         // Clear VERTICAL accumulation where [sensitivity %] of HORIZONTAL momentum exceeds VERTICAL momentum
         drgstraight_cancel_y = true;
         // dprintf("cleared vertical accumulation \n");
