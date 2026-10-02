@@ -1,24 +1,34 @@
 #pragma once
 
-uint8_t jiggler_get_state(void);
+bool jiggler_get_state(void);
+uint8_t jiggler_get_true_state(void);
+bool jiggler_get_state(void);
+void jiggler_set_state(bool newstate);
 void jiggler_end(void);
 void jiggler_start(void);
 void jiggler_toggle(void);
 void jiggle_delay(uint32_t delay_sec);
 
-#if (!defined(MSJIGGLER_NOINTRO)) && (!defined(MSJIGGLER_INTRO_TIMEOUT))
-    #define MSJIGGLER_INTRO_TIMEOUT 1000
-#endif // MSJIGGLER_NOINTRO
+#define MSJIGGLER_INTRO_TIMEOUT 1000
 
-#define MSJIGGLER_PATTERN_SUBTLE 1
-#define MSJIGGLER_PATTERN_XLINE 2
-#define MSJIGGLER_PATTERN_YLINE 3
-#define MSJIGGLER_PATTERN_CIRCLE 4
-#define MSJIGGLER_PATTERN_CIRCLESMALL 5
-#define MSJIGGLER_PATTERN_CIRCLECCW 6
-#define MSJIGGLER_PATTERN_CIRCLECCWSMALL 7
-#define MSJIGGLER_PATTERN_FIGURE 8
-#define MSJIGGLER_PATTERN_SQUARE 9
+enum jiggler_patterns {
+    MSJIGGLER_PATTERN_NONE = 0,
+    MSJIGGLER_PATTERN_SUBTLE,
+    MSJIGGLER_PATTERN_XLINE,
+    MSJIGGLER_PATTERN_YLINE,
+    MSJIGGLER_PATTERN_CIRCLE,
+    MSJIGGLER_PATTERN_CIRCLESMALL,
+    MSJIGGLER_PATTERN_CIRCLECCW,
+    MSJIGGLER_PATTERN_CIRCLECCWSMALL,
+    MSJIGGLER_PATTERN_FIGURE,
+    MSJIGGLER_PATTERN_SQUARE, // 9
+};
+
+enum jiggler_states {
+    MSJIGGLER_STATE_OFF = 0,
+    MSJIGGLER_STATE_RUNNING,
+    MSJIGGLER_STATE_RUNINTRO,
+};
 
 #if ! defined(MSJIGGLER_PATTERN)
     #define MSJIGGLER_PATTERN MSJIGGLER_PATTERN_SUBTLE

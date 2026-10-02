@@ -5,20 +5,123 @@
 #include QMK_KEYBOARD_H
 #include "mouse_jiggler.h"
 
+#if defined(MSJIGGLER_NOEEPROM)
+    // Are there any variables used in this case?
+#else
+    #include "eeconfig.h"
+    typedef struct mouse_jiggler_config_t {
+        #ifdef MSJIGGLER_BACKOFF_IN_EEPROM
+            uint16_t    backoff     :16
+        #endif
+        uint8_t     pattern     :4;
+        uint8_t     pattern_int :4;
+        uint8_t     pattern_out :4;
+        bool        state       :1;
+    } mouse_jiggler_config_t;
+    mouse_jiggler_config_t mouse_jiggler_config;
+    mouse_jiggler_config_t mouse_jiggler_default_config = {
+        #ifdef MSJIGGLER_BACKOFF_IN_EEPROM
+            .backoff        = MSJIGGLER_BACKOFF,
+        #endif // MSJIGGLER_BACKOFF_IN_EEPROM
+        .pattern        = MSJIGGLER_PATTERN,
+        .pattern_int    = MSJIGGLER_PATTERN_INTRO,
+        .pattern_out    = MSJIGGLER_PATTERN_ENDING,
+        .state          = false,
+    };
+
+    _Static_assert(sizeof(mouse_jiggler_config_t) <= EECONFIG_MODULE_MOUSE_JIGGLER_DATA_SIZE, "EECONFIG_MODULE_MOUSE_JIGGLER_DATA_SIZE is too small");
+
+    void eeconfig_read_mouse_jiggler(mouse_jiggler_config_t *value) {
+        eeconfig_read_mouse_jiggler_datablock(value, 0, sizeof(mouse_jiggler_config_t));
+    }
+
+    void eeconfig_update_mouse_jiggler(mouse_jiggler_config_t *value) {
+        eeconfig_update_mouse_jiggler_datablock(value, 0, sizeof(mouse_jiggler_config_t));
+    }
+
+    EECONFIG_DEBOUNCE_HELPER(mouse_jiggler, mouse_jiggler_config);
+
+    void keyboard_post_init_mouse_jiggler(void) {
+        eeconfig_init_mouse_jiggler();
+        if(jiggler_get_state()){ jiggler_start(); }
+    }
+
+    void eeconfig_init_mouse_jiggler_datablock(void) {
+        mouse_jiggler_config = mouse_jiggler_default_config;
+        eeconfig_flush_mouse_jiggler(true);
+    }
+
+    void housekeeping_task_mouse_jiggler(void) {
+        eeconfig_flush_mouse_jiggler_task(1000);
+    }
+
+#endif // MSJIGGLER_NOEEPROM
+
 report_mouse_t msJigReport = {0};
 deferred_token msJigMainToken = INVALID_DEFERRED_TOKEN;
 deferred_token msJigIntroToken = INVALID_DEFERRED_TOKEN;
 deferred_token msJigIntroTimerToken = INVALID_DEFERRED_TOKEN;
 
-uint8_t jiggler_get_state (void) {
+uint8_t jiggler_get_true_state (void) {
     if (msJigMainToken != INVALID_DEFERRED_TOKEN){
         if(msJigIntroToken != INVALID_DEFERRED_TOKEN){
-            return 2;
+            return MSJIGGLER_STATE_RUNINTRO;
         } else {
-            return 1;
+            return MSJIGGLER_STATE_RUNNING;
         }
     }
-    return 0;
+    return MSJIGGLER_STATE_OFF;
+}
+
+bool jiggler_get_state (void) {
+    #if defined(MSJIGGLER_NOEEPROM)
+        return (bool)jiggler_get_true_state();
+    #else
+        return mouse_jiggler_config.state;
+    #endif
+}
+
+uint8_t jiggler_get_config_pattern(void){
+    #if defined(MSJIGGLER_NOEEPROM)
+        return MSJIGGLER_PATTERN;
+    #else
+        return mouse_jiggler_config.pattern;
+    #endif
+}
+
+uint8_t jiggler_get_config_pattern_int(void){
+    #if defined(MSJIGGLER_NOEEPROM)
+        return MSJIGGLER_PATTERN_INTRO;
+    #else
+        return mouse_jiggler_config.pattern_int;
+    #endif
+}
+
+uint8_t jiggler_get_config_pattern_out(void){
+    #if defined(MSJIGGLER_NOEEPROM)
+        return MSJIGGLER_PATTERN_ENDING;
+    #else
+        return mouse_jiggler_config.pattern_out;
+    #endif
+}
+
+void jiggler_set_state (bool newstate) {
+    dprintf("jiggler_set_state(%d)\n", newstate);
+    if(newstate){
+        jiggler_start();
+    }
+    else{
+        jiggler_end();
+    }
+    #if defined(MSJIGGLER_NOEEPROM)
+    #else
+        mouse_jiggler_config.state = newstate;
+    #endif
+    eeconfig_flag_mouse_jiggler(true);
+}
+
+void jiggler_toggle(void) {
+    jiggler_set_state(!jiggler_get_state());
 }
 
 uint32_t jiggler_pattern(int8_t deltas[], int8_t numdeltas, int8_t phasefraction, int8_t scalex, int8_t scaley, bool randomdelay, int16_t basedelay) {
@@ -105,117 +208,54 @@ uint32_t jiggler_introtimer(uint32_t trigger_time, void *cb_arg) {
     return 0;
 }
 
+deferred_token jiggler_start_pattern(uint8_t pattern){
+    switch(pattern){
+        case MSJIGGLER_PATTERN_NONE:
+            return INVALID_DEFERRED_TOKEN;
+        case MSJIGGLER_PATTERN_SUBTLE:
+            return defer_exec(1, jiggler_subtle, NULL);
+        case MSJIGGLER_PATTERN_XLINE:
+            return defer_exec(1, jiggler_xline, NULL);
+        case MSJIGGLER_PATTERN_YLINE:
+            return defer_exec(1, jiggler_yline, NULL);
+        case MSJIGGLER_PATTERN_CIRCLE:
+            return defer_exec(1, jiggler_circle, NULL);
+        case MSJIGGLER_PATTERN_CIRCLESMALL:
+            return defer_exec(1, jiggler_circle_small, NULL);
+        case MSJIGGLER_PATTERN_CIRCLECCW:
+            return defer_exec(1, jiggler_circle_ccw, NULL);
+        case MSJIGGLER_PATTERN_CIRCLECCWSMALL:
+            return defer_exec(1, jiggler_circle_ccw_small, NULL);
+        case MSJIGGLER_PATTERN_FIGURE:
+            return defer_exec(1, jiggler_figure, NULL);
+        case MSJIGGLER_PATTERN_SQUARE:
+            return defer_exec(1, jiggler_square, NULL);
+    }
+    return INVALID_DEFERRED_TOKEN;
+}
+
+
 void jiggler_end(void) {
     dprintf("jiggler_end\n");
+    jiggler_intro_end();
     cancel_deferred_exec(msJigMainToken);
     msJigReport = (report_mouse_t){}; // Clear the mouse.
     host_mouse_send(&msJigReport);
-    #if !defined(MSJIGGLER_NOINTRO)
-        #if MSJIGGLER_PATTERN_ENDING == MSJIGGLER_PATTERN_SUBTLE
-            msJigIntroToken = defer_exec(1, jiggler_subtle, NULL);
-        #elif MSJIGGLER_PATTERN_ENDING == MSJIGGLER_PATTERN_XLINE
-            msJigIntroToken = defer_exec(1, jiggler_xline, NULL);
-        #elif MSJIGGLER_PATTERN_ENDING == MSJIGGLER_PATTERN_YLINE
-            msJigIntroToken = defer_exec(1, jiggler_yline, NULL);
-        #elif MSJIGGLER_PATTERN_ENDING == MSJIGGLER_PATTERN_CIRCLE
-            msJigIntroToken = defer_exec(1, jiggler_circle, NULL);
-        #elif MSJIGGLER_PATTERN_ENDING == MSJIGGLER_PATTERN_CIRCLESMALL
-            msJigIntroToken = defer_exec(1, jiggler_circle_small, NULL);
-        #elif MSJIGGLER_PATTERN_ENDING == MSJIGGLER_PATTERN_CIRCLECCW
-            msJigIntroToken = defer_exec(1, jiggler_circle_ccw, NULL);
-        #elif MSJIGGLER_PATTERN_ENDING == MSJIGGLER_PATTERN_CIRCLECCWSMALL
-            msJigIntroToken = defer_exec(1, jiggler_circle_ccw_small, NULL);
-        #elif MSJIGGLER_PATTERN_ENDING == MSJIGGLER_PATTERN_FIGURE
-            msJigIntroToken = defer_exec(1, jiggler_figure, NULL);
-        #elif MSJIGGLER_PATTERN_ENDING == MSJIGGLER_PATTERN_SQUARE
-            msJigIntroToken = defer_exec(1, jiggler_square, NULL);
-        #endif // MSJIGGLER_PATTERN_ENDING
-
-        #if defined(MSJIGGLER_INTRO_TIMEOUT)
-            msJigIntroTimerToken = defer_exec(MSJIGGLER_INTRO_TIMEOUT, jiggler_introtimer, NULL);
-        #endif // MSJIGGLER_INTRO_TIMEOUT
-    #endif // !defined(MSJIGGLER_NOINTRO)
+    msJigIntroToken = jiggler_start_pattern(jiggler_get_config_pattern_out());
+    msJigIntroTimerToken = defer_exec(MSJIGGLER_INTRO_TIMEOUT, jiggler_introtimer, NULL);
     msJigMainToken = INVALID_DEFERRED_TOKEN;
 }
 
 void jiggler_start(void) {
-    #if MSJIGGLER_PATTERN == MSJIGGLER_PATTERN_SUBTLE
-        dprintf("jiggler_start: MSJIGGLER_PATTERN_SUBTLE \n");
-        msJigMainToken = defer_exec(1, jiggler_subtle, NULL);
-    #elif MSJIGGLER_PATTERN == MSJIGGLER_PATTERN_XLINE
-        dprintf("jiggler_start: MSJIGGLER_PATTERN_XLINE \n");
-        msJigMainToken = defer_exec(1, jiggler_xline, NULL);
-    #elif MSJIGGLER_PATTERN == MSJIGGLER_PATTERN_YLINE
-        dprintf("jiggler_start: MSJIGGLER_PATTERN_YLINE \n");
-        msJigMainToken = defer_exec(1, jiggler_yline, NULL);
-    #elif MSJIGGLER_PATTERN == MSJIGGLER_PATTERN_CIRCLE
-        dprintf("jiggler_start: MSJIGGLER_PATTERN_CIRCLE \n");
-        msJigMainToken = defer_exec(1, jiggler_circle, NULL);
-    #elif MSJIGGLER_PATTERN == MSJIGGLER_PATTERN_CIRCLESMALL
-        dprintf("jiggler_start: MSJIGGLER_PATTERN_CIRCLESMALL \n");
-        msJigMainToken = defer_exec(1, jiggler_circle_small, NULL);
-    #elif MSJIGGLER_PATTERN == MSJIGGLER_PATTERN_CIRCLECCW
-        dprintf("jiggler_start: MSJIGGLER_PATTERN_CIRCLECCW \n");
-        msJigMainToken = defer_exec(1, jiggler_circle_ccw, NULL);
-    #elif MSJIGGLER_PATTERN == MSJIGGLER_PATTERN_CIRCLECCWSMALL
-        dprintf("jiggler_start: MSJIGGLER_PATTERN_CIRCLECCWSMALL \n");
-        msJigMainToken = defer_exec(1, jiggler_circle_ccw_small, NULL);
-    #elif MSJIGGLER_PATTERN == MSJIGGLER_PATTERN_FIGURE
-        dprintf("jiggler_start: MSJIGGLER_PATTERN_FIGURE \n");
-        msJigMainToken = defer_exec(1, jiggler_figure, NULL);
-    #elif MSJIGGLER_PATTERN == MSJIGGLER_PATTERN_SQUARE
-        dprintf("jiggler_start: MSJIGGLER_PATTERN_SQUARE \n");
-        msJigMainToken = defer_exec(1, jiggler_square, NULL);
-    #endif // MSJIGGLER_PATTERN
-
-    #if !defined(MSJIGGLER_NOINTRO)
-        #if MSJIGGLER_PATTERN_INTRO == MSJIGGLER_PATTERN_SUBTLE
-            dprintf("intro: MSJIGGLER_PATTERN_SUBTLE \n");
-            msJigIntroToken = defer_exec(1, jiggler_subtle, NULL);
-        #elif MSJIGGLER_PATTERN_INTRO == MSJIGGLER_PATTERN_XLINE
-            dprintf("intro: MSJIGGLER_PATTERN_XLINE \n");
-            msJigIntroToken = defer_exec(1, jiggler_xline, NULL);
-        #elif MSJIGGLER_PATTERN_INTRO == MSJIGGLER_PATTERN_YLINE
-            dprintf("intro: MSJIGGLER_PATTERN_YLINE \n");
-            msJigIntroToken = defer_exec(1, jiggler_yline, NULL);
-        #elif MSJIGGLER_PATTERN_INTRO == MSJIGGLER_PATTERN_CIRCLE
-            dprintf("intro: MSJIGGLER_PATTERN_CIRCLE \n");
-            msJigIntroToken = defer_exec(1, jiggler_circle, NULL);
-        #elif MSJIGGLER_PATTERN_INTRO == MSJIGGLER_PATTERN_CIRCLESMALL
-            dprintf("intro: MSJIGGLER_PATTERN_CIRCLESMALL \n");
-            msJigIntroToken = defer_exec(1, jiggler_circle_small, NULL);
-        #elif MSJIGGLER_PATTERN_INTRO == MSJIGGLER_PATTERN_CIRCLECCW
-            dprintf("intro: MSJIGGLER_PATTERN_CIRCLECCW \n");
-            msJigIntroToken = defer_exec(1, jiggler_circle_ccw, NULL);
-        #elif MSJIGGLER_PATTERN_INTRO == MSJIGGLER_PATTERN_CIRCLECCWSMALL
-            dprintf("intro: MSJIGGLER_PATTERN_CIRCLECCWSMALL \n");
-            msJigIntroToken = defer_exec(1, jiggler_circle_ccw_small, NULL);
-        #elif MSJIGGLER_PATTERN_INTRO == MSJIGGLER_PATTERN_FIGURE
-            dprintf("intro: MSJIGGLER_PATTERN_FIGURE \n");
-            msJigIntroToken = defer_exec(1, jiggler_figure, NULL);
-        #elif MSJIGGLER_PATTERN_INTRO == MSJIGGLER_PATTERN_SQUARE
-            dprintf("intro: MSJIGGLER_PATTERN_SQUARE \n");
-            msJigIntroToken = defer_exec(1, jiggler_square, NULL);
-        #endif // MSJIGGLER_PATTERN_INTRO
-        #if defined(MSJIGGLER_INTRO_TIMEOUT)
-            dprintf("intro timer: %dms \n", MSJIGGLER_INTRO_TIMEOUT);
-            msJigIntroTimerToken = defer_exec(MSJIGGLER_INTRO_TIMEOUT, jiggler_introtimer, NULL);
-        #endif // MSJIGGLER_INTRO_TIMEOUT
-    #endif // !defined(MSJIGGLER_NOINTRO)
-}
-
-void jiggler_toggle(void) {
-    dprintf("jiggler_toggle\n");
     jiggler_intro_end();
-    if (jiggler_get_state()) {
-        jiggler_end();
-    } else {
-        jiggler_start();
-    }
+    msJigMainToken = jiggler_start_pattern(jiggler_get_config_pattern());
+    msJigIntroToken = jiggler_start_pattern(jiggler_get_config_pattern_int());
+    dprintf("intro timer: %dms \n", MSJIGGLER_INTRO_TIMEOUT);
+    msJigIntroTimerToken = defer_exec(MSJIGGLER_INTRO_TIMEOUT, jiggler_introtimer, NULL);
 }
 
 void jiggle_delay(uint32_t delay_sec) {
-    if (jiggler_get_state()) {
+    if (jiggler_get_true_state()) {
         // dprintf("delay the jiggles\n");
         extend_deferred_exec(msJigMainToken, delay_sec * 1000);
     }
@@ -224,7 +264,7 @@ void jiggle_delay(uint32_t delay_sec) {
 bool process_record_mouse_jiggler(uint16_t keycode, keyrecord_t *record) {
     if (
         #if defined(MSJIGGLER_AUTOSTOP)
-            jiggler_get_state() ||
+            jiggler_get_true_state() ||
         #endif // MSJIGGLER_AUTOSTOP
         keycode == COMMUNITY_MODULE_MOUSE_JIGGLER_TOGGLE &&
         record->event.pressed
