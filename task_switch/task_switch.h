@@ -1,34 +1,40 @@
 #pragma once
 
-#ifndef TASKSWITCH_DELAY
-    #define TASKSWITCH_DELAY 1000
-#endif // TASKSWITCH_DELAY
+void task_switch_press(bool reverse);
+void task_switch_release(void);
 
-#ifndef TASKSWITCH_MOD
-    #define TASKSWITCH_MOD MOD_LALT
-#endif // TASKSWITCH_MOD
+uint16_t task_switch_get_delay(void);
+void task_switch_set_delay(uint16_t newdelay);
 
-#ifndef TASKSWITCH_REVERSE_MOD
-    #define TASKSWITCH_REVERSE_MOD MOD_LSFT
-#endif // TASKSWITCH_REVERSE_MOD
+bool task_switch_get_os_detection_state(void);
+void task_switch_set_os_detection_state(bool newstate);
 
-#ifndef TASKSWITCH_TAP
-    #define TASKSWITCH_TAP KC_TAB
-#endif // TASKSWITCH_TAP
+void task_switch_set_eeconfig_key(bool configb, int8_t key, uint16_t newvalue);
+uint16_t task_switch_get_eeconfig_key(bool configb, int8_t key);
 
-#if defined(DEFERRED_EXEC_ENABLE) && (!defined(TASKSWITCH_FORCE_NDE))
-    #define TASKSWITCH_MODE_DE
-    #include "deferred_exec.h"
-#endif // DEFERRED_EXEC_ENABLE
+uint8_t task_switch_get_eeconfig_configset(uint8_t configset);
+void task_switch_set_eeconfig_configset(uint8_t configset, uint8_t newoption);
 
-void taskswitch_press(bool reverse);
-void taskswitch_release(void);
+enum {
+    TASK_SWITCH_CONFIG_KEY_MOD = 0,
+    TASK_SWITCH_CONFIG_KEY_RMOD,
+    TASK_SWITCH_CONFIG_KEY_TAP,
+    TASK_SWITCH_CONFIG_KEY_RTAP, // 3
+};
 
-uint8_t taskswitch_get_mod(void);
-void taskswitch_set_mod(uint8_t newmod);
-uint8_t taskswitch_get_rev_mod(void);
-void taskswitch_set_rev_mod(uint8_t newmod);
-uint16_t taskswitch_get_tap(void);
-void taskswitch_set_tap(uint16_t newtap);
-uint16_t taskswitch_get_delay(void);
-void taskswitch_set_delay(uint16_t newdelay);
+enum {
+    TASK_SWITCH_CONFIG_SET_INVALID = 0,
+    TASK_SWITCH_CONFIG_SET_WINDOWS,
+    TASK_SWITCH_CONFIG_SET_MACOS,
+    TASK_SWITCH_CONFIG_SET_CUSTOM_A,
+    TASK_SWITCH_CONFIG_SET_CUSTOM_B, // 4
+};
+
+enum {
+    TASK_SWITCH_OPTION_INVALID= 0,
+    TASK_SWITCH_OPTION_WINDOWS,
+    TASK_SWITCH_OPTION_MACOS,
+    TASK_SWITCH_OPTION_LINUX,
+    TASK_SWITCH_OPTION_UNKNOWNOS,
+    TASK_SWITCH_OPTION_MANUAL,
+};

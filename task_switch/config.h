@@ -1,0 +1,3 @@
+#pragma once
+
+#define EECONFIG_MODULE_TASK_SWITCH_DATA_SIZE 17
