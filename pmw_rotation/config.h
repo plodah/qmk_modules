@@ -1,0 +1,2 @@
+#pragma once
+#define EECONFIG_MODULE_PMW_ROTATION_DATA_SIZE 1
