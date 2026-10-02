@@ -144,7 +144,7 @@ bool rgb_matrix_indicators_rgb_indicators(void) {
       #if !defined(MSJIGGLER_NOINTRO)
           RGB msjigintrorgb = hsv_to_rgb( rgbhelpers_limit_ind( rgb_matrix_get_hsv(), PLODAH_RGBINDICATORS_MSJIGGLERINTRO_HSV, PLODAH_RGBINDICATORS_MINVAL ) );
       #endif // !defined(MSJIGGLER_NOINTRO)
-      switch(jiggler_get_state()){
+      switch(jiggler_get_true_state()){
           #if !defined(MSJIGGLER_NOINTRO)
               case 2:
                   rgb_matrix_set_color(PLODAH_RGBINDICATORS_MSJIGGLER_INDEX, msjigintrorgb.r, msjigintrorgb.g, msjigintrorgb.b);

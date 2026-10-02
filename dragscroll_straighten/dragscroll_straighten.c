@@ -57,25 +57,26 @@ bool drgstraight_cancel_y;
 
 bool drgstraight_get_state(void){
     #if defined(DRAGSCROLL_STRAIGHTEN_NOEEPROM)
-      return ds_str_state;
+        return ds_str_state;
     #else
-      return dragscroll_straighten_config.state;
+        return dragscroll_straighten_config.state;
     #endif
 }
 
-bool drgstraight_set_state(bool newstate){
+void drgstraight_set_state(bool newstate){
     #if defined(DRAGSCROLL_STRAIGHTEN_NOEEPROM)
-      ds_str_state = newstate;
+        ds_str_state = newstate;
     #else
-      return dragscroll_straighten_config.state;
+        dragscroll_straighten_config.state = newstate;
+        eeconfig_flag_dragscroll_straighten(true);
     #endif
 }
 
 uint8_t drgstraight_get_sensitivity(void){
     #if defined(DRAGSCROLL_STRAIGHTEN_NOEEPROM)
-      return sensitivity;
+        return sensitivity;
     #else
-      return dragscroll_straighten_config.sensitivity;
+        return dragscroll_straighten_config.sensitivity;
     #endif
 }
 
