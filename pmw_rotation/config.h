@@ -1,2 +1,10 @@
 #pragma once
+
+#ifndef PMW_ROTATION_STEP_SIZE
+    #define PMW_ROTATION_STEP_SIZE 15
+#endif
+#ifndef PMW_ROTATION_LIMIT
+    #define PMW_ROTATION_LIMIT 127
+#endif
+
 #define EECONFIG_MODULE_PMW_ROTATION_DATA_SIZE 1

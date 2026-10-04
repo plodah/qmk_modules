@@ -6,7 +6,11 @@
     int8_t pointer_rotation_value;
 #else
     #include "eeconfig.h"
+    typedef struct pmw_rotation_config_t {
+        int8_t  rotation;
+    } pmw_rotation_config_t;
     pmw_rotation_config_t pmw_rotation_config;
+
     pmw_rotation_config_t pmw_rotation_default_config = {
         #ifdef ROTATIONAL_TRANSFORM_ANGLE
             .rotation = ROTATIONAL_TRANSFORM_ANGLE,
@@ -66,7 +70,15 @@ pmw_rotation_uconfig_t pmw_rotation_get_uconfig (void) {
     return output;
 }
 
-void pmw_rotation_set_config (bool absolute, int8_t value) {
+void pmw_rotation_config_to_sensor (void) {
+    pmw_rotation_set_sensor(pmw_rotation_get_config());
+}
+
+void pmw_rotation_sensor_to_config (void) {
+    pmw_rotation_set_config(true, pmw_rotation_get_sensor(), false);
+}
+
+void pmw_rotation_set_config (bool absolute, int8_t value, bool apply) {
     int16_t working_val = pmw_rotation_get_config();
     working_val = absolute ? value : (working_val+value);
     working_val = CONSTRAIN(working_val, -PMW_ROTATION_LIMIT, PMW_ROTATION_LIMIT);
@@ -77,18 +89,13 @@ void pmw_rotation_set_config (bool absolute, int8_t value) {
         eeconfig_flag_pmw_rotation(true);
     #endif
     dprintf("set pmwrotation:%d\n", working_val);
+    if(apply){
+        pmw_rotation_config_to_sensor();
+    }
 }
 
-void pmw_rotation_set_uconfig (bool absolute, pmw_rotation_uconfig_t value){
-    pmw_rotation_set_config(absolute, value.ccw ? -value.rotation : value.rotation);
-}
-
-void pmw_rotation_config_to_sensor (void) {
-    pmw_rotation_set_sensor(pmw_rotation_get_config());
-}
-
-void pmw_rotation_sensor_to_config (void) {
-    pmw_rotation_set_config(true, pmw_rotation_get_sensor());
+void pmw_rotation_set_uconfig (bool absolute, pmw_rotation_uconfig_t value, bool apply){
+    pmw_rotation_set_config(absolute, value.ccw ? -value.rotation : value.rotation, apply);
 }
 
 bool process_record_pmw_rotation (uint16_t keycode, keyrecord_t *record) {
@@ -96,17 +103,16 @@ bool process_record_pmw_rotation (uint16_t keycode, keyrecord_t *record) {
         // dprintf("process_record_pmw_rotation\n");
         switch (keycode) {
             case COMMUNITY_MODULE_PMW_ROTATE_CCW:
-                pmw_rotation_set_config(false, PMW_ROTATION_STEP_SIZE);
-                pmw_rotation_config_to_sensor();
+                pmw_rotation_set_config(false, PMW_ROTATION_STEP_SIZE, true);
                 dprintf(" PMW_ROTATE_CCW\n");
                 return false;
             case COMMUNITY_MODULE_PMW_ROTATE_CW:
-                pmw_rotation_set_config(false, -PMW_ROTATION_STEP_SIZE);
+                pmw_rotation_set_config(false, -PMW_ROTATION_STEP_SIZE, true);
                 pmw_rotation_config_to_sensor();
                 dprintf(" PMW_ROTATE_CW\n");
                 return false;
             case COMMUNITY_MODULE_PMW_ROTATE_RESET:
-                pmw_rotation_set_config(true, ROTATIONAL_TRANSFORM_ANGLE);
+                pmw_rotation_set_config(true, ROTATIONAL_TRANSFORM_ANGLE, true);
                 pmw_rotation_config_to_sensor();
                 dprintf(" PMW_ROTATE_RST\n");
                 return false;
