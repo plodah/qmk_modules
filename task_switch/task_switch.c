@@ -2,6 +2,10 @@
 #include "task_switch.h"
 #include "os_detection.h"
 
+#if !defined(TASK_SWITCH_NO_OS_DETECTION) && !defined(OS_DETECTION_ENABLE)
+    #define TASK_SWITCH_NO_OS_DETECTION
+#endif
+
 #if defined(DEFERRED_EXEC_ENABLE) && (!defined(TASK_SWITCH_FORCE_NDE))
     #define TASK_SWITCH_MODE_DE
     #include "deferred_exec.h"
@@ -78,30 +82,34 @@ static const task_switch_osconf_t task_switch_osconf_default = {
     typedef struct task_switch_config_t  {
         task_switch_osconf_t    customosconf_a; // 42b (48?) => 6B
         task_switch_osconf_t    customosconf_b; // 42b (48?) => 6B
-        uint8_t                 windows_conf        :4;
-        uint8_t                 macos_conf          :4;
-        uint8_t                 linux_conf          :4;
-        uint8_t                 unknownos_conf      :4;
-        uint8_t                 manual_conf         :4;
-        bool                    use_os_detection    :1; // sum 21b => 3B
         uint16_t                delay;              // 16 => 2B
+        uint8_t                 manual_conf         :4;
+        #if !defined(TASK_SWITCH_NO_OS_DETECTION)
+          uint8_t                 windows_conf        :4;
+          uint8_t                 macos_conf          :4;
+          uint8_t                 linux_conf          :4;
+          uint8_t                 unknownos_conf      :4;
+          bool                    use_os_detection    :1; // sum 21b => 3B
+        #endif
     } PACKED task_switch_config_t;
     task_switch_config_t task_switch_config;
 
     task_switch_config_t task_switch_default_config = {
         .customosconf_a     = task_switch_osconf_default,
         .customosconf_b     = task_switch_osconf_default,
-        .windows_conf       = TASK_SWITCH_MODE_WINDOWS,
-        .macos_conf         = TASK_SWITCH_MODE_MACOS,
-        .linux_conf         = TASK_SWITCH_MODE_LINUX,
-        .unknownos_conf     = TASK_SWITCH_MODE_DEFAULT,
-        .manual_conf        = TASK_SWITCH_MODE_DEFAULT,
-        #ifdef TASK_SWITCH_DISABLE_OS_DETECTION
-            .use_os_detection   = false,
-        #else
-            .use_os_detection   = true,
-        #endif
         .delay  = TASK_SWITCH_DELAY,
+        .manual_conf        = TASK_SWITCH_MODE_DEFAULT,
+        #if !defined(TASK_SWITCH_NO_OS_DETECTION)
+          .windows_conf       = TASK_SWITCH_MODE_WINDOWS,
+          .macos_conf         = TASK_SWITCH_MODE_MACOS,
+          .linux_conf         = TASK_SWITCH_MODE_LINUX,
+          .unknownos_conf     = TASK_SWITCH_MODE_DEFAULT,
+          #ifdef TASK_SWITCH_DISABLE_OS_DETECTION
+              .use_os_detection   = false,
+          #else
+              .use_os_detection   = true,
+          #endif
+        #endif // TASK_SWITCH_NO_OS_DETECTION
     };
 
     _Static_assert(sizeof(task_switch_config_t) <= EECONFIG_MODULE_TASK_SWITCH_DATA_SIZE, "EECONFIG_MODULE_TASK_SWITCH_DATA_SIZE is too small");
@@ -123,10 +131,6 @@ static const task_switch_osconf_t task_switch_osconf_default = {
     void eeconfig_init_task_switch_datablock(void) {
         task_switch_config = task_switch_default_config;
         eeconfig_flush_task_switch(true);
-    }
-
-    void housekeeping_task_task_switch(void) {
-        eeconfig_flush_task_switch_task(1000);
     }
 
     task_switch_osconf_t task_switch_get_config_object(uint8_t id) {
@@ -199,14 +203,16 @@ static const task_switch_osconf_t task_switch_osconf_default = {
 
     uint8_t task_switch_get_eeconfig_configset(uint8_t configset){
         switch(configset){
-            case TASK_SWITCH_OPTION_WINDOWS:
-                return task_switch_config.windows_conf;
-            case TASK_SWITCH_OPTION_MACOS:
-                return task_switch_config.macos_conf;
-            case TASK_SWITCH_OPTION_LINUX:
-                return task_switch_config.linux_conf;
-            case TASK_SWITCH_OPTION_UNKNOWNOS:
-                return task_switch_config.unknownos_conf;
+            #if !defined(TASK_SWITCH_NO_OS_DETECTION)
+              case TASK_SWITCH_OPTION_WINDOWS:
+                  return task_switch_config.windows_conf;
+              case TASK_SWITCH_OPTION_MACOS:
+                  return task_switch_config.macos_conf;
+              case TASK_SWITCH_OPTION_LINUX:
+                  return task_switch_config.linux_conf;
+              case TASK_SWITCH_OPTION_UNKNOWNOS:
+                  return task_switch_config.unknownos_conf;
+            #endif // TASK_SWITCH_NO_OS_DETECTION
             case TASK_SWITCH_OPTION_MANUAL:
                 return task_switch_config.manual_conf;
         }
@@ -215,25 +221,33 @@ static const task_switch_osconf_t task_switch_osconf_default = {
 
     void task_switch_set_eeconfig_configset(uint8_t configset, uint8_t newoption){
         switch(configset){
-            case TASK_SWITCH_OPTION_WINDOWS:
-                task_switch_config.windows_conf = newoption;
-            case TASK_SWITCH_OPTION_MACOS:
-                task_switch_config.macos_conf = newoption;
-            case TASK_SWITCH_OPTION_LINUX:
-                task_switch_config.linux_conf = newoption;
-            case TASK_SWITCH_OPTION_UNKNOWNOS:
-                task_switch_config.unknownos_conf = newoption;
+            #if !defined(TASK_SWITCH_NO_OS_DETECTION)
+              case TASK_SWITCH_OPTION_WINDOWS:
+                  task_switch_config.windows_conf = newoption;
+              case TASK_SWITCH_OPTION_MACOS:
+                  task_switch_config.macos_conf = newoption;
+              case TASK_SWITCH_OPTION_LINUX:
+                  task_switch_config.linux_conf = newoption;
+              case TASK_SWITCH_OPTION_UNKNOWNOS:
+                  task_switch_config.unknownos_conf = newoption;
+            #endif // TASK_SWITCH_NO_OS_DETECTION
             case TASK_SWITCH_OPTION_MANUAL:
                 task_switch_config.manual_conf = newoption;
         }
     }
 
     bool task_switch_get_os_detection_state(void){
-        return task_switch_config.use_os_detection;
+        #if !defined(TASK_SWITCH_NO_OS_DETECTION)
+            return task_switch_config.use_os_detection;
+        #else
+            return false;
+        #endif
     }
 
     void task_switch_set_os_detection_state(bool newstate){
-        task_switch_config.use_os_detection = newstate;
+        #if !defined(TASK_SWITCH_NO_OS_DETECTION)
+            task_switch_config.use_os_detection = newstate;
+        #endif
     }
 #endif // TASK_SWITCH_NOEEPROM
 
@@ -245,30 +259,30 @@ static const task_switch_osconf_t task_switch_osconf_default = {
 bool mod_registered;
 
 uint8_t task_switch_get_active_config_id(void) {
-    #if defined(TASK_SWITCH_NOEEPROM) && defined(TASK_SWITCH_DISABLE_OS_DETECTION)
-        return TASK_SWITCH_DEFAULT_MODE;
-    #endif
-
-    #if !defined(TASK_SWITCH_NOEEPROM)
-        if(task_switch_config.use_os_detection){
-    #endif
-            switch (detected_host_os()) {
-                case OS_MACOS:
-                case OS_IOS:
-                    return task_switch_config.macos_conf;
-                case OS_WINDOWS:
-                    return task_switch_config.windows_conf;
-                case OS_LINUX:
-                    return task_switch_config.linux_conf;
-                case OS_UNSURE:
-                default:
-                    return task_switch_config.unknownos_conf;
+    #if (defined(TASK_SWITCH_NOEEPROM) && defined(TASK_SWITCH_DISABLE_OS_DETECTION)) || defined(TASK_SWITCH_NO_OS_DETECTION)
+        return TASK_SWITCH_MODE_DEFAULT;
+    #else
+        #if !defined(TASK_SWITCH_NOEEPROM)
+            if(task_switch_config.use_os_detection){
+        #endif
+                switch (detected_host_os()) {
+                    case OS_MACOS:
+                    case OS_IOS:
+                        return task_switch_config.macos_conf;
+                    case OS_WINDOWS:
+                        return task_switch_config.windows_conf;
+                    case OS_LINUX:
+                        return task_switch_config.linux_conf;
+                    case OS_UNSURE:
+                    default:
+                        return task_switch_config.unknownos_conf;
+                }
+        #if !defined(TASK_SWITCH_NOEEPROM)
+            } // end of if statement from above
+            else{
+                return task_switch_config.manual_conf;
             }
-    #if !defined(TASK_SWITCH_NOEEPROM)
-        } // end of if statement from above
-        else{
-            return task_switch_config.manual_conf;
-        }
+        #endif
     #endif
 }
 
@@ -304,6 +318,13 @@ void task_switch_reset(void){
         dprintf("task_switch_deferred_task\n");
         return 0;
     }
+
+    #if !defined(TASK_SWITCH_NOEEPROM)
+        void housekeeping_task_task_switch(void) {
+            eeconfig_flush_task_switch_task(1000);
+        }
+    #endif // !defined(TASK_SWITCH_NOEEPROM)
+
 #else // TASK_SWITCH_MODE_DE
     void housekeeping_task_task_switch(void) {
         if (mod_registered) {
@@ -312,6 +333,11 @@ void task_switch_reset(void){
                 dprintf("task_switch timer elapsed\n");
             }
         }
+
+        #if !defined(TASK_SWITCH_NOEEPROM)
+            eeconfig_flush_task_switch_task(1000);
+        #endif
+
     }
 #endif // TASK_SWITCH_MODE_DE
 
