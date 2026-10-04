@@ -1,0 +1,6 @@
+#pragma once
+#ifdef TURBO_FIRE_KEYCOUNT
+    #define EECONFIG_MODULE_TURBO_FIRE_DATA_SIZE (3 + 2 * TURBO_FIRE_KEYCOUNT)
+#else
+    #define EECONFIG_MODULE_TURBO_FIRE_DATA_SIZE (3 + 2 * 4)
+#endif
